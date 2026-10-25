@@ -2,7 +2,8 @@
 
 A music guessing game for Grafana: a random The Strokes clip plays, you type the
 song title, and a correct answer reveals the album art and plays the track for
-another 15 seconds. Score and streak are tracked per run.
+another 15 seconds. Score and streak are tracked per run, over the band's
+wallpaper.
 
 Built for the MIS 251 final project, where the deliverable is **a Grafana plugin
 that builds, loads in Grafana and shows the student's name**.
@@ -33,11 +34,11 @@ You do not need Docker: the repo uses a standalone Grafana 13.2.4 build in
 
 ## The catalog
 
-**78 songs across all 8 releases**, in release order:
+**79 songs across all 8 releases**, in release order:
 
 | Year | Release | Type | Songs |
 | --- | --- | --- | --- |
-| 2001 | Is This It | Album | 11 |
+| 2001 | Is This It | Album | 12 |
 | 2003 | Room on Fire | Album | 11 |
 | 2006 | First Impressions of Earth | Album | 14 |
 | 2011 | Angles | Album | 10 |
@@ -46,11 +47,11 @@ You do not need Docker: the repo uses a standalone Grafana 13.2.4 build in
 | 2020 | The New Abnormal | Album | 9 |
 | 2026 | Reality Awaits | Album | 9 |
 
-The data source serves the whole catalog. The **game**, however, only queues
-songs that actually have a clip bundled: 18 placeholder clips ship with the
-repo, so the idle screen reads "18 playable songs" and the footer shows
-`18/78 with audio`. Add real audio for a song and it becomes playable
-automatically — no code change.
+The data source serves the whole catalog. The **game** only queues songs that
+actually have a clip bundled: 78 of the 79 songs ship with a 30-second iTunes
+preview, so the idle screen reads "78 playable songs" and the footer shows
+`78/79 with audio`. iTunes has no preview for *New York City Cops*, so that one
+is in the catalog table but never queued.
 
 ## Screenshots
 
@@ -108,41 +109,59 @@ To change the values, edit `ROOM_ON_FIRE_OFFSET` / `ROOM_ON_FIRE_OVERRIDES` in
 [`tools/build-assets.mjs`](tools/build-assets.mjs) and run
 `node tools/build-assets.mjs`.
 
-## Adding real audio
+## Background wallpaper
 
-Placeholder `.wav` clips are generated so the plugin is playable immediately.
-To use real tracks, drop files into `omer-strokesquiz-panel/src/audio/clips/`
-using the song id as the file name:
+The panel uses a bundled Strokes wallpaper
+(`omer-strokesquiz-panel/src/img/background.jpg`) with a dark overlay so the
+text stays readable. Two panel options control it, both under **Appearance**:
 
+| Option | Default | What it does |
+| --- | --- | --- |
+| Wallpaper background | on | Show or hide the image |
+| Wallpaper dimming | 72 | 0 = original colours, 100 = almost black |
+
+The image is bundled through webpack, so it works offline and travels with the
+plugin. Swap the file to change the wallpaper, then rebuild.
+
+## Audio
+
+The repo ships a **30-second iTunes preview** for 78 of the 79 songs in
+`omer-strokesquiz-panel/src/audio/clips/`, named by song id
+(`reptilia.m4a`, `last-nite.m4a`, …). `src/audio/index.ts` resolves that folder
+with `require.context` and prefers `mp3 > m4a > ogg > wav`, so dropping a
+higher-quality file with the same id silently replaces the preview.
+
+To import a folder of downloads (any file names, nested folders are fine):
+
+```bash
+node tools/import-clips.mjs ~/Desktop/strokes-songs/src/audio
+
+# preview the mapping without copying anything
+node tools/import-clips.mjs ~/Desktop/strokes-songs/src/audio --dry-run
 ```
-omer-strokesquiz-panel/src/audio/clips/reptilia.mp3
-omer-strokesquiz-panel/src/audio/clips/last-nite.mp3
-```
 
-`src/audio/index.ts` resolves every clip in that folder and prefers
-`mp3 > m4a > ogg > wav`, so a real mp3 silently replaces the placeholder — no
-code change. The file name **must** be the song id. Rebuild with `./tools/dev.sh`.
+It matches each file to a catalog title (case, accents, punctuation and `&`
+versus `and` are ignored), copies it as `<song-id>.<ext>`, and reports files
+that matched nothing. Then rebuild with `./tools/dev.sh`.
 
-Song ids are in [`omer-strokesquiz-panel/src/catalog.json`](omer-strokesquiz-panel/src/catalog.json).
-You do not need to trim the tracks: the player seeks to the song's intro offset
-and stops after the configured clip/reveal length, so full-length files work.
+You do not need to trim tracks: the player seeks to the song's intro offset and
+stops after the configured clip/reveal length, so full-length files work.
 
-Only the 18 songs in `DEMO_PLACEHOLDERS` have a placeholder `.wav`; the other 60
-become playable the moment you add their audio file, because the game pool is
-built from songs whose clip resolves. `node tools/build-assets.mjs` prints a
-warning if a clip file name does not match any catalog id.
+Song ids are in
+[`omer-strokesquiz-panel/src/catalog.json`](omer-strokesquiz-panel/src/catalog.json).
+The game pool is built from songs whose clip resolves, so adding audio for
+*New York City Cops* would make it playable with no code change.
 
-> **Copyright:** short clips only, and keep unlicensed audio out of the submitted
-> git repository if you can — the plugin works with placeholders for the demo.
+> **Copyright:** these are 30-second previews of recordings owned by The Strokes
+> and RCA. They are included for a course demo only.
 
 ## Adding songs
 
 1. Add the title to the matching release's `tracks` array in the `ALBUMS` list in
    `tools/build-assets.mjs` (add a new release object if needed).
-2. Add its id to `DEMO_PLACEHOLDERS` only if you want a synthesised placeholder.
-3. `node tools/build-assets.mjs` — rewrites both catalogs and prints the counts.
-4. Drop the real audio file in `src/audio/clips/<id>.mp3` (optional).
-5. `./tools/dev.sh`
+2. `node tools/build-assets.mjs` — rewrites both catalogs and prints the counts.
+3. `node tools/import-clips.mjs <folder>` to copy its audio (optional).
+4. `./tools/dev.sh`
 
 The panel uses the data source when one is attached, and falls back to the
 catalog bundled in `catalog.json` otherwise — so it never shows an empty screen.
@@ -155,9 +174,10 @@ strokes-quiz/
 │   ├── webpack.config.ts          # extends .config/webpack with the audio rule
 │   ├── src/components/StrokesQuizPanel.tsx
 │   ├── src/components/AlbumArt.tsx
+│   ├── src/img/background.jpg     # bundled wallpaper
 │   ├── src/audio/index.ts         # require.context clip resolver
 │   ├── src/audio/player.ts        # offset-aware HTMLAudioElement wrapper
-│   ├── src/audio/clips/           # audio (wav placeholders + your mp3s)
+│   ├── src/audio/clips/           # 78 song clips, named by id
 │   ├── src/catalog.json           # generated song metadata
 │   ├── src/utils/answer.ts        # answer normalisation
 │   └── src/utils/queue.ts         # shuffle + round queue
@@ -166,7 +186,8 @@ strokes-quiz/
 ├── grafana/                       # custom.ini, provisioning, dashboard JSON
 ├── plugins/                       # built plugins loaded by Grafana (generated)
 └── tools/
-    ├── build-assets.mjs           # catalog + placeholder audio generator
+    ├── build-assets.mjs           # catalog generator
+    ├── import-clips.mjs           # bulk-rename audio downloads to song ids
     ├── sync.sh                    # build both plugins into ./plugins
     ├── dev.sh                     # sync + run Grafana
     └── smoke.mjs                  # headless end-to-end check + screenshots
@@ -181,7 +202,7 @@ strokes-quiz/
 | Loads inside Grafana | `./tools/dev.sh`, dashboard provisioned |
 | Student's name visible | Footer of the panel: "Developed by Omer — Fall 2026" |
 | Panel bonus: real data from a query | Panel reads the data source frame when attached |
-| Panel bonus: configuration options | 8 options (rounds, clip length, reveal length, max guesses, extra intro skip, album art, hints, credit) |
+| Panel bonus: configuration options | 10 options (rounds, clip length, reveal length, max guesses, extra intro skip, album art, hints, wallpaper, dimming, credit) |
 | Panel bonus: interactivity | Keyboard submit, hover states, replay, shake feedback |
 | Data source bonus: mock JSON | `src/songs.json` |
 | Data source bonus: query params | Album filter + row limit in the query editor |
@@ -212,5 +233,6 @@ For Intel macOS use `darwin-amd64`; for Linux use `linux-amd64` / `linux-arm64`.
 ## Credits
 
 Songs and album titles belong to The Strokes. Album artwork in the plugin is
-generated (gradients + initials), not the real covers. Audio placeholders are
-synthesised tones, not the recordings.
+generated (gradients + initials), not the real covers. Audio clips are 30-second
+iTunes previews of the recordings, included for a course demo. Wallpaper image
+supplied by the student.

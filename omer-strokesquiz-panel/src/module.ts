@@ -59,6 +59,21 @@ export const plugin = new PanelPlugin<QuizOptions>(StrokesQuizPanel).setPanelOpt
       category: ['Appearance'],
       defaultValue: DEFAULT_OPTIONS.showHints,
     })
+    .addBooleanSwitch({
+      path: 'showBackground',
+      name: 'Wallpaper background',
+      description: 'Use the bundled Strokes wallpaper behind the game.',
+      category: ['Appearance'],
+      defaultValue: DEFAULT_OPTIONS.showBackground,
+    })
+    .addSliderInput({
+      path: 'backgroundDim',
+      name: 'Wallpaper dimming',
+      description: 'Darkens the wallpaper so the text stays readable. 0 = original image, 100 = black.',
+      category: ['Appearance'],
+      defaultValue: DEFAULT_OPTIONS.backgroundDim,
+      settings: { min: 0, max: 95, step: 5 },
+    })
     .addTextInput({
       path: 'credit',
       name: 'Credit line',

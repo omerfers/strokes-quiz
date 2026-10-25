@@ -17,8 +17,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 22,
-        "w": 12,
+        "h": 16,
+        "w": 24,
         "x": 0,
         "y": 0
       },
@@ -31,7 +31,9 @@
         "extraIntroSkipSeconds": 0,
         "maxGuesses": 3,
         "showAlbumArt": true,
-        "showHints": true
+        "showHints": true,
+        "showBackground": true,
+        "backgroundDim": 72
       },
       "targets": [
         {
@@ -122,10 +124,10 @@
         ]
       },
       "gridPos": {
-        "h": 22,
-        "w": 12,
-        "x": 12,
-        "y": 0
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 16
       },
       "id": 2,
       "options": {

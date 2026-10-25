@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { PanelProps } from '@grafana/data';
 import { css, cx, keyframes } from '@emotion/css';
 import { Button, Icon, Input, useStyles2, useTheme2 } from '@grafana/ui';
+import backgroundImage from '../img/background.jpg';
 import { ClipPlayer } from '../audio/player';
 import { resolveSongs } from '../songs';
 import { buildQueue } from '../utils/queue';
@@ -105,6 +106,14 @@ const getStyles = (theme: ReturnType<typeof useTheme2>) => ({
     gap: 12px;
     max-width: 460px;
     animation: ${popIn} 220ms ease-out;
+  `,
+  cardSurface: css`
+    padding: 20px 26px;
+    border-radius: 16px;
+    background: rgba(12, 9, 9, 0.42);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(7px);
   `,
   idleHeadline: css`
     font-size: clamp(20px, 3.2cqw, 30px);
@@ -305,6 +314,16 @@ export function StrokesQuizPanel({ options, data }: Props) {
   const maxGuesses = Math.max(1, options.maxGuesses ?? 3);
   const showHints = options.showHints ?? true;
   const showAlbumArt = options.showAlbumArt ?? true;
+  const showBackground = options.showBackground ?? true;
+  const backgroundDim = Math.min(0.95, Math.max(0, (options.backgroundDim ?? 72) / 100));
+  const backgroundStyle = showBackground
+    ? {
+        backgroundImage: `linear-gradient(rgba(8, 6, 6, ${backgroundDim}), rgba(8, 6, 6, ${backgroundDim})), url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }
+    : undefined;
 
   // One player instance for the lifetime of the panel; the lazy initializer
   // keeps it stable across renders without touching a ref during render.
@@ -438,7 +457,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
   );
 
   const renderIdle = () => (
-    <div className={styles.centerCard}>
+    <div className={cx(styles.centerCard, showBackground && styles.cardSurface)}>
       <h2 className={styles.idleHeadline}>How well do you know The Strokes?</h2>
       <p className={styles.muted}>
         {playableSongs.length} playable songs · {rounds} rounds · {clipLengthSeconds}s clips · {revealSeconds}s
@@ -460,7 +479,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
     const hintTitle = showHints && wrongGuesses >= 2;
 
     return (
-      <div className={styles.playingCard}>
+      <div className={cx(styles.playingCard, showBackground && styles.cardSurface)}>
         <div className={styles.eq} aria-hidden>
           {Array.from({ length: 7 }).map((_, i) => (
             <span key={i} />
@@ -541,7 +560,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
     const correct = verdict === 'correct';
 
     return (
-      <div className={styles.revealCard}>
+      <div className={cx(styles.revealCard, showBackground && styles.cardSurface)}>
         <span className={cx(styles.badge, correct ? styles.badgeCorrect : styles.badgeMiss)}>
           <Icon name={correct ? 'check' : 'info-circle'} size="sm" />
           {correct ? 'Correct +1' : 'The answer was'}
@@ -580,7 +599,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
   };
 
   const renderFinished = () => (
-    <div className={styles.centerCard}>
+    <div className={cx(styles.centerCard, showBackground && styles.cardSurface)}>
       <p className={styles.muted}>Round complete</p>
       <div className={styles.bigScore}>
         {score}
@@ -603,7 +622,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
   );
 
   return (
-    <div className={styles.root} data-testid="strokes-quiz-panel">
+    <div className={styles.root} style={backgroundStyle} data-testid="strokes-quiz-panel">
       <div className={styles.header}>{phase !== 'idle' && renderScoreboard()}</div>
 
       <div className={styles.stage}>

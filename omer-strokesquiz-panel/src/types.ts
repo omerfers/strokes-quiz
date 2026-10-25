@@ -26,6 +26,10 @@ export interface QuizOptions {
   showAlbumArt: boolean;
   /** Show album/year hints after a wrong guess. */
   showHints: boolean;
+  /** Use the bundled Strokes wallpaper behind the panel. */
+  showBackground: boolean;
+  /** How dark the wallpaper overlay is (0 = bright, 100 = black). */
+  backgroundDim: number;
   /** Credit line in the footer. Must show your name for the course requirement. */
   credit: string;
 }
@@ -38,5 +42,7 @@ export const DEFAULT_OPTIONS: QuizOptions = {
   maxGuesses: 3,
   showAlbumArt: true,
   showHints: true,
+  showBackground: true,
+  backgroundDim: 72,
   credit: 'Developed by Omer — Fall 2026',
 };
