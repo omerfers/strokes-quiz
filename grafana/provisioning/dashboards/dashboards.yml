@@ -9,5 +9,6 @@ providers:
     updateIntervalSeconds: 10
     allowUiUpdates: true
     options:
-      path: /Users/omer/strokes-quiz/grafana/dashboards
+      # tools/dev.sh exports STROKES_DASHBOARDS so the repo can live anywhere.
+      path: ${STROKES_DASHBOARDS}
       foldersFromFilesStructure: false
