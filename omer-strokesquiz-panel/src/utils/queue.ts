@@ -6,21 +6,14 @@ export function shuffle<T>(items: T[]): T[] {
   }
   return copy;
 }
-
-/**
- * Fisher-Yates shuffle, reshuffling when the requested round count is longer
- * than the catalog so a run never dies early.
- */
 export function buildQueue<T>(songs: T[], rounds: number): T[] {
   if (songs.length === 0) {
     return [];
   }
-
   const requested = Number.isFinite(rounds) ? Math.floor(rounds) : 1;
   const target = Math.max(1, requested);
   const queue: T[] = [];
   let pool: T[] = [];
-
   while (queue.length < target) {
     if (pool.length === 0) {
       pool = shuffle(songs);
@@ -31,6 +24,5 @@ export function buildQueue<T>(songs: T[], rounds: number): T[] {
     }
     queue.push(next);
   }
-
   return queue;
 }

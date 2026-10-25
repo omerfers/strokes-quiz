@@ -4,10 +4,16 @@
   "name": "Strokes Song Quiz",
   "id": "omer-strokesquiz-panel",
   "info": {
-    "keywords": ["panel", "quiz", "music", "strokes", "game"],
-    "description": "Music guessing game: a random The Strokes clip plays, you name the track, and the album art plus score are shown. Developed by Omer — Fall 2026.",
+    "keywords": [
+      "panel",
+      "quiz",
+      "music",
+      "strokes",
+      "game"
+    ],
+    "description": "Music guessing game: a random The Strokes clip plays, you name the track, and the album art plus score are shown. Developed by Ömer Faruk Ersakay.",
     "author": {
-      "name": "Omer"
+      "name": "Ömer Faruk Ersakay"
     },
     "logos": {
       "small": "img/logo.svg",

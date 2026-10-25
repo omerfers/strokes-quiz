@@ -1,12 +1,11 @@
 import { PanelPlugin } from '@grafana/data';
 import { StrokesQuizPanel } from './components/StrokesQuizPanel';
 import { DEFAULT_OPTIONS, QuizOptions } from './types';
-
 export const plugin = new PanelPlugin<QuizOptions>(StrokesQuizPanel).setPanelOptions((builder) => {
   return builder
     .addNumberInput({
       path: 'rounds',
-      name: 'Rounds per game',
+      name: 'Songs per game',
       description: 'How many songs a single run contains. The queue reshuffles if it runs out.',
       category: ['Quiz'],
       defaultValue: DEFAULT_OPTIONS.rounds,
@@ -48,7 +47,7 @@ export const plugin = new PanelPlugin<QuizOptions>(StrokesQuizPanel).setPanelOpt
     .addBooleanSwitch({
       path: 'showAlbumArt',
       name: 'Show album art',
-      description: 'Generated cover art during the reveal (no copyrighted images bundled).',
+      description: 'Real album cover during the reveal.',
       category: ['Appearance'],
       defaultValue: DEFAULT_OPTIONS.showAlbumArt,
     })

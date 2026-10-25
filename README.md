@@ -34,11 +34,11 @@ You do not need Docker: the repo uses a standalone Grafana 13.2.4 build in
 
 ## The catalog
 
-**79 songs across all 8 releases**, in release order:
+**78 songs across all 8 releases**, in release order:
 
 | Year | Release | Type | Songs |
 | --- | --- | --- | --- |
-| 2001 | Is This It | Album | 12 |
+| 2001 | Is This It | Album | 11 |
 | 2003 | Room on Fire | Album | 11 |
 | 2006 | First Impressions of Earth | Album | 14 |
 | 2011 | Angles | Album | 10 |
@@ -47,11 +47,9 @@ You do not need Docker: the repo uses a standalone Grafana 13.2.4 build in
 | 2020 | The New Abnormal | Album | 9 |
 | 2026 | Reality Awaits | Album | 9 |
 
-The data source serves the whole catalog. The **game** only queues songs that
-actually have a clip bundled: 78 of the 79 songs ship with a 30-second iTunes
-preview, so the idle screen reads "78 playable songs" and the footer shows
-`78/79 with audio`. iTunes has no preview for *New York City Cops*, so that one
-is in the catalog table but never queued.
+The data source serves the whole catalog, and every song has a 30-second iTunes
+preview bundled with the panel, so the footer reads `78/78 with audio` and any
+song in the table can come up in a round.
 
 ## Screenshots
 
@@ -78,11 +76,11 @@ node tools/smoke.mjs
 
 | Step | Behaviour |
 | --- | --- |
-| Start | 10 playable songs (ones with a bundled clip) are shuffled into a queue (configurable) |
-| Listen | A clip plays for 10s from the song's start offset |
+| Start | 15 songs are shuffled into a queue (configurable) |
+| Listen | A clip plays for 5s from the song's start offset; pause or resume it any time |
 | Guess | Type the title; accents, case, punctuation and a leading "The" are ignored |
 | Hints | 1st miss reveals album + year, 2nd reveals the title pattern |
-| Correct | +1 score, album art + title shown, track plays for 15s |
+| Correct | +1 score, cover + title shown, track plays for 8s |
 | Reveal | "Reveal answer" skips without scoring |
 
 Everything is local: no backend, no external API, no network calls at runtime.
@@ -125,7 +123,7 @@ plugin. Swap the file to change the wallpaper, then rebuild.
 
 ## Audio
 
-The repo ships a **30-second iTunes preview** for 78 of the 79 songs in
+The repo ships a **30-second iTunes preview** for every one of the 78 songs in
 `omer-strokesquiz-panel/src/audio/clips/`, named by song id
 (`reptilia.m4a`, `last-nite.m4a`, …). `src/audio/index.ts` resolves that folder
 with `require.context` and prefers `mp3 > m4a > ogg > wav`, so dropping a
@@ -149,8 +147,6 @@ stops after the configured clip/reveal length, so full-length files work.
 
 Song ids are in
 [`omer-strokesquiz-panel/src/catalog.json`](omer-strokesquiz-panel/src/catalog.json).
-The game pool is built from songs whose clip resolves, so adding audio for
-*New York City Cops* would make it playable with no code change.
 
 > **Copyright:** these are 30-second previews of recordings owned by The Strokes
 > and RCA. They are included for a course demo only.
@@ -173,7 +169,8 @@ strokes-quiz/
 ├── omer-strokesquiz-panel/        # panel plugin (game)
 │   ├── webpack.config.ts          # extends .config/webpack with the audio rule
 │   ├── src/components/StrokesQuizPanel.tsx
-│   ├── src/components/AlbumArt.tsx
+│   ├── src/components/AlbumArt.tsx  # real cover art per release
+│   ├── src/img/covers/            # 8 album covers
 │   ├── src/img/background.jpg     # bundled wallpaper
 │   ├── src/audio/index.ts         # require.context clip resolver
 │   ├── src/audio/player.ts        # offset-aware HTMLAudioElement wrapper
@@ -200,9 +197,9 @@ strokes-quiz/
 | One Grafana plugin | Two: panel + data source |
 | Builds successfully | `npm run build` in both projects |
 | Loads inside Grafana | `./tools/dev.sh`, dashboard provisioned |
-| Student's name visible | Footer of the panel: "Developed by Omer — Fall 2026" |
+| Student's name visible | Footer of the panel: "Developed by Ömer Faruk Ersakay" |
 | Panel bonus: real data from a query | Panel reads the data source frame when attached |
-| Panel bonus: configuration options | 10 options (rounds, clip length, reveal length, max guesses, extra intro skip, album art, hints, wallpaper, dimming, credit) |
+| Panel bonus: configuration options | 10 options (songs per game, clip length, reveal length, max guesses, extra intro skip, album art, hints, wallpaper, dimming, credit) |
 | Panel bonus: interactivity | Keyboard submit, hover states, replay, shake feedback |
 | Data source bonus: mock JSON | `src/songs.json` |
 | Data source bonus: query params | Album filter + row limit in the query editor |
@@ -232,7 +229,6 @@ For Intel macOS use `darwin-amd64`; for Linux use `linux-amd64` / `linux-arm64`.
 
 ## Credits
 
-Songs and album titles belong to The Strokes. Album artwork in the plugin is
-generated (gradients + initials), not the real covers. Audio clips are 30-second
-iTunes previews of the recordings, included for a course demo. Wallpaper image
-supplied by the student.
+Songs and album titles belong to The Strokes. Album artwork and audio clips are
+the band's own releases, included for a course demo. Wallpaper image supplied by
+the student.

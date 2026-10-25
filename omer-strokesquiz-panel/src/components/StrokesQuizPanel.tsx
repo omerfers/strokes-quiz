@@ -1,334 +1,398 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { PanelProps } from '@grafana/data';
-import { css, cx, keyframes } from '@emotion/css';
-import { Button, Icon, Input, useStyles2, useTheme2 } from '@grafana/ui';
+import { GrafanaTheme2, PanelProps } from '@grafana/data';
+import { css, cx } from '@emotion/css';
+import { useStyles2 } from '@grafana/ui';
 import backgroundImage from '../img/background.jpg';
-import { ClipPlayer } from '../audio/player';
+import { ClipPlayer, ClipState } from '../audio/player';
 import { resolveSongs } from '../songs';
 import { buildQueue } from '../utils/queue';
 import { QuizOptions, Song } from '../types';
 import { isCorrectGuess, maskTitle } from '../utils/answer';
 import { AlbumArt } from './AlbumArt';
-
 interface Props extends PanelProps<QuizOptions> {}
-
 type Phase = 'idle' | 'playing' | 'reveal' | 'finished';
 type Verdict = 'none' | 'wrong' | 'correct';
-
-const equalize = keyframes`
-  0%, 100% { transform: scaleY(0.25); }
-  50% { transform: scaleY(1); }
-`;
-
-const popIn = keyframes`
-  from { opacity: 0; transform: translateY(10px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-`;
-
-const shake = keyframes`
-  10%, 90% { transform: translateX(-1px); }
-  20%, 80% { transform: translateX(2px); }
-  30%, 50%, 70% { transform: translateX(-4px); }
-  40%, 60% { transform: translateX(4px); }
-`;
-
-const getStyles = (theme: ReturnType<typeof useTheme2>) => ({
+const INK = '#f4f1ed';
+const ACCENT = '#c9332a';
+const MUTED = 'rgba(244, 241, 237, 0.56)';
+const FAINT = 'rgba(244, 241, 237, 0.36)';
+const HAIRLINE = 'rgba(244, 241, 237, 0.14)';
+const getStyles = (theme: GrafanaTheme2) => ({
   root: css`
     display: flex;
     flex-direction: column;
     height: 100%;
     min-height: 320px;
-    padding: 14px 16px 10px;
+    padding: 20px 28px 12px;
     box-sizing: border-box;
-    color: ${theme.colors.text.primary};
-    background:
-      radial-gradient(120% 90% at 12% 0%, ${theme.colors.primary.transparent} 0%, transparent 55%),
-      ${theme.colors.background.canvas};
+    color: ${INK};
+    background-color: #0b0909;
     border-radius: ${theme.shape.radius.default};
     overflow: hidden;
+    container-type: inline-size;
+    font-family: ${theme.typography.fontFamily};
   `,
   header: css`
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    gap: 12px;
+    justify-content: space-between;
+    gap: 16px;
     flex-wrap: wrap;
-    min-height: 0;
+    padding-bottom: 14px;
+    border-bottom: 1px solid ${HAIRLINE};
+    flex: 0 0 auto;
   `,
-  scoreboard: css`
-    display: flex;
+  brand: css`
+    display: inline-flex;
     align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  `,
+  brandDot: css`
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: ${ACCENT};
+    flex: 0 0 auto;
+  `,
+  brandDim: css`
+    color: ${FAINT};
+    font-weight: 500;
+    letter-spacing: 0.2em;
+  `,
+  meta: css`
+    display: flex;
+    align-items: baseline;
+    gap: 26px;
+  `,
+  metaBlock: css`
+    display: flex;
+    align-items: baseline;
     gap: 8px;
   `,
-  scorePill: css`
-    display: inline-flex;
-    align-items: baseline;
-    gap: 6px;
-    padding: 4px 12px;
-    border-radius: 999px;
-    background: ${theme.colors.background.secondary};
-    border: 1px solid ${theme.colors.border.weak};
-    font-variant-numeric: tabular-nums;
-  `,
-  scoreValue: css`
-    font-size: 20px;
-    font-weight: 700;
-    color: ${theme.colors.primary.text};
-  `,
-  scoreLabel: css`
-    font-size: 11px;
+  metaLabel: css`
+    font-size: 9px;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: ${theme.colors.text.secondary};
+    color: ${FAINT};
   `,
-  streak: css`
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    color: ${theme.colors.warning.text};
+  metaValue: css`
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    font-variant-numeric: tabular-nums;
   `,
   stage: css`
     flex: 1;
+    min-height: 0;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
-    gap: 14px;
-    padding: 14px 0 8px;
+    justify-content: flex-start;
+    padding: 18px 0;
     overflow-y: auto;
   `,
-  centerCard: css`
+  content: css`
+    width: 100%;
+    max-width: 620px;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
+    box-sizing: border-box;
+  `,
+  eyebrow: css`
+    display: inline-flex;
     align-items: center;
-    text-align: center;
+    gap: 9px;
+    margin: 0 0 16px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: ${FAINT};
+  `,
+  eyebrowDot: css`
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: ${ACCENT};
+  `,
+  headline: css`
+    margin: 0 0 30px;
+    max-width: 18ch;
+    font-size: clamp(30px, 3.4cqw, 46px);
+    font-weight: 600;
+    line-height: 1.04;
+    letter-spacing: -0.035em;
+  `,
+  prompt: css`
+    margin: 0 0 22px;
+    font-size: clamp(24px, 2.4cqw, 34px);
+    font-weight: 600;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+  `,
+  primary: css`
+    appearance: none;
+    border: 0;
+    border-radius: 2px;
+    padding: 12px 24px;
+    background: ${ACCENT};
+    color: #fff;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 120ms ease;
+    &:hover {
+      background: #de453a;
+    }
+    &:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+  `,
+  ghost: css`
+    appearance: none;
+    border: 1px solid rgba(244, 241, 237, 0.22);
+    border-radius: 2px;
+    padding: 9px 16px;
+    background: transparent;
+    color: rgba(244, 241, 237, 0.82);
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      border-color 120ms ease,
+      color 120ms ease;
+    &:hover {
+      border-color: rgba(244, 241, 237, 0.5);
+      color: #fff;
+    }
+  `,
+  audioRow: css`
+    display: flex;
+    align-items: center;
     gap: 12px;
-    max-width: 460px;
-    animation: ${popIn} 220ms ease-out;
+    flex-wrap: wrap;
+    margin: 0 0 26px;
   `,
-  cardSurface: css`
-    padding: 20px 26px;
-    border-radius: 16px;
-    background: rgba(12, 9, 9, 0.42);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(7px);
+  status: css`
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: ${FAINT};
   `,
-  idleHeadline: css`
-    font-size: clamp(20px, 3.2cqw, 30px);
-    font-weight: 800;
-    margin: 0;
-    line-height: 1.15;
-    background: linear-gradient(92deg, ${theme.colors.text.primary}, ${theme.colors.primary.text});
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  `,
-  muted: css`
-    color: ${theme.colors.text.secondary};
-    font-size: 13px;
-    margin: 0;
-  `,
-  playingCard: css`
+  form: css`
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 14px;
     width: 100%;
-    max-width: 520px;
-    animation: ${popIn} 220ms ease-out;
+    margin: 0 0 14px;
   `,
-  eq: css`
+  actions: css`
     display: flex;
-    align-items: flex-end;
-    gap: 4px;
-    height: 34px;
-    color: ${theme.colors.primary.text};
-    span {
-      width: 5px;
-      height: 100%;
-      border-radius: 3px;
-      background: currentColor;
-      transform-origin: bottom;
-      animation: ${equalize} 900ms ease-in-out infinite;
-    }
-    span:nth-child(2) { animation-delay: 120ms; }
-    span:nth-child(3) { animation-delay: 240ms; }
-    span:nth-child(4) { animation-delay: 90ms; }
-    span:nth-child(5) { animation-delay: 300ms; }
-    span:nth-child(6) { animation-delay: 180ms; }
-    span:nth-child(7) { animation-delay: 60ms; }
-  `,
-  guessForm: css`
-    display: flex;
-    gap: 8px;
-    width: 100%;
     align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
   `,
-  shake: css`
-    animation: ${shake} 420ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
-    border-color: ${theme.colors.error.border} !important;
+  input: css`
+    flex: 1;
+    min-width: 0;
+    padding: 10px 2px;
+    border: 0;
+    border-bottom: 1px solid rgba(244, 241, 237, 0.32);
+    border-radius: 0;
+    background: transparent;
+    color: ${INK};
+    font-family: inherit;
+    font-size: clamp(18px, 1.8cqw, 24px);
+    letter-spacing: -0.01em;
+    outline: none;
+    &::placeholder {
+      color: rgba(244, 241, 237, 0.34);
+    }
+    &:focus {
+      border-color: ${ACCENT};
+    }
   `,
-  hintBox: css`
-    width: 100%;
+  inputWrong: css`
+    border-color: rgba(222, 69, 58, 0.7);
+  `,
+  hints: css`
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    padding: 8px 12px;
-    border-radius: ${theme.shape.radius.default};
-    background: ${theme.colors.background.secondary};
-    border: 1px dashed ${theme.colors.border.medium};
+    gap: 7px;
+    margin: 0 0 14px;
+  `,
+  hintLine: css`
     font-size: 12px;
-    color: ${theme.colors.text.secondary};
-    text-align: left;
+    letter-spacing: 0.02em;
+    color: rgba(244, 241, 237, 0.66);
+  `,
+  hintKey: css`
+    margin-right: 9px;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: ${FAINT};
+  `,
+  hintStrong: css`
+    color: ${INK};
   `,
   mask: css`
     font-family: ${theme.typography.fontFamilyMonospace};
-    letter-spacing: 0.12em;
-    color: ${theme.colors.text.primary};
+    letter-spacing: 0.16em;
+    color: ${INK};
   `,
-  revealCard: css`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    max-width: 560px;
-    animation: ${popIn} 240ms ease-out;
+  message: css`
+    margin: 0 0 14px;
+    font-size: 12px;
+    color: ${MUTED};
   `,
-  revealGrid: css`
+  warning: css`
+    margin: 0 0 14px;
+    font-size: 11px;
+    color: #e3a26b;
+  `,
+  revealRow: css`
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 18px;
-    width: 100%;
-    justify-content: center;
+    align-items: flex-start;
+    gap: 28px;
     flex-wrap: wrap;
+    width: 100%;
+    margin: 0 0 28px;
   `,
-  artWrap: css`
-    width: 148px;
+  art: css`
+    width: 180px;
     flex: 0 0 auto;
-    container-type: inline-size;
   `,
   revealText: css`
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    text-align: left;
-    min-width: 180px;
-    flex: 1 1 200px;
+    align-items: flex-start;
+    gap: 8px;
+    padding-top: 2px;
+    flex: 1 1 220px;
+    min-width: 0;
   `,
-  songTitle: css`
-    font-size: clamp(20px, 2.6cqw, 28px);
-    font-weight: 800;
-    line-height: 1.2;
+  title: css`
     margin: 0;
+    font-size: clamp(26px, 2.7cqw, 40px);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
   `,
-  badge: css`
-    align-self: flex-start;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 2px 10px;
-    border-radius: 999px;
+  albumLine: css`
+    margin: 0;
     font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
+    color: ${MUTED};
   `,
-  badgeCorrect: css`
-    color: ${theme.colors.success.text};
-    background: ${theme.colors.success.transparent};
+  offsetLine: css`
+    margin: 0;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: ${FAINT};
   `,
-  badgeMiss: css`
-    color: ${theme.colors.error.text};
-    background: ${theme.colors.error.transparent};
+  verdictLine: css`
+    margin: 14px 0 0;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #b9d8b3;
+  `,
+  verdictMiss: css`
+    color: ${MUTED};
+  `,
+  resultScore: css`
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 0 0 12px;
+  `,
+  scoreNumber: css`
+    font-size: clamp(56px, 7cqw, 96px);
+    font-weight: 600;
+    line-height: 0.9;
+    letter-spacing: -0.05em;
+    font-variant-numeric: tabular-nums;
+  `,
+  scoreOf: css`
+    font-size: 16px;
+    letter-spacing: 0.02em;
+    color: ${FAINT};
+  `,
+  resultMeta: css`
+    margin: 0 0 10px;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: ${MUTED};
+  `,
+  resultLine: css`
+    margin: 0 0 30px;
+    max-width: 42ch;
+    font-size: 14px;
+    line-height: 1.55;
+    color: rgba(244, 241, 237, 0.74);
   `,
   footer: css`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
-    padding-top: 8px;
-    margin-top: 6px;
-    border-top: 1px solid ${theme.colors.border.weak};
-    font-size: 11px;
-    color: ${theme.colors.text.disabled};
+    gap: 16px;
     flex-wrap: wrap;
+    padding-top: 10px;
+    border-top: 1px solid rgba(244, 241, 237, 0.1);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: ${FAINT};
+    flex: 0 0 auto;
   `,
   credit: css`
-    font-weight: 600;
+    font-size: 10px;
     letter-spacing: 0.04em;
-    color: ${theme.colors.text.secondary};
-  `,
-  warning: css`
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: ${theme.colors.warning.text};
-  `,
-  progressTrack: css`
-    width: 100%;
-    height: 4px;
-    border-radius: 999px;
-    background: ${theme.colors.background.secondary};
-    overflow: hidden;
-  `,
-  progressFill: css`
-    height: 100%;
-    border-radius: 999px;
-    background: ${theme.colors.primary.main};
-    transition: width 220ms ease-out;
-  `,
-  bigScore: css`
-    font-size: 56px;
-    font-weight: 800;
-    line-height: 1;
-    color: ${theme.colors.primary.text};
-    font-variant-numeric: tabular-nums;
-  `,
-  actions: css`
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    justify-content: center;
+    text-transform: none;
+    color: rgba(244, 241, 237, 0.6);
   `,
 });
-
 export function StrokesQuizPanel({ options, data }: Props) {
-  const theme = useTheme2();
   const styles = useStyles2(getStyles);
-
   const { songs, source } = useMemo(() => resolveSongs(data), [data]);
-  // Only songs with a bundled clip can actually be played, so they are the only
-  // ones allowed into a round. The rest of the catalog still shows in the table.
   const playableSongs = useMemo(() => songs.filter((song) => Boolean(song.clipUrl)), [songs]);
-
-  const rounds = Math.max(1, options.rounds ?? 10);
-  const clipLengthSeconds = Math.max(1, options.clipLengthSeconds ?? 10);
-  const revealSeconds = Math.max(1, options.revealSeconds ?? 15);
+  const rounds = Math.max(1, options.rounds ?? 15);
+  const clipLengthSeconds = Math.max(1, options.clipLengthSeconds ?? 5);
+  const revealSeconds = Math.max(1, options.revealSeconds ?? 8);
   const extraSkip = Math.max(0, options.extraIntroSkipSeconds ?? 0);
   const maxGuesses = Math.max(1, options.maxGuesses ?? 3);
   const showHints = options.showHints ?? true;
   const showAlbumArt = options.showAlbumArt ?? true;
   const showBackground = options.showBackground ?? true;
   const backgroundDim = Math.min(0.95, Math.max(0, (options.backgroundDim ?? 72) / 100));
+  const backgroundScrim = Math.min(0.97, backgroundDim + 0.16);
   const backgroundStyle = showBackground
     ? {
-        backgroundImage: `linear-gradient(rgba(8, 6, 6, ${backgroundDim}), rgba(8, 6, 6, ${backgroundDim})), url(${backgroundImage})`,
+        backgroundImage: `linear-gradient(90deg, rgba(6, 4, 4, ${backgroundScrim}) 0%, rgba(6, 4, 4, ${backgroundScrim}) 34%, rgba(6, 4, 4, ${backgroundDim}) 62%, rgba(6, 4, 4, ${backgroundDim}) 100%), url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
       }
     : undefined;
-
-  // One player instance for the lifetime of the panel; the lazy initializer
-  // keeps it stable across renders without touching a ref during render.
-  const [player] = useState(() => new ClipPlayer());
-
+  const [audioState, setAudioState] = useState<ClipState>('idle');
+  const [player] = useState(() => new ClipPlayer(setAudioState));
   const [phase, setPhase] = useState<Phase>('idle');
   const [queue, setQueue] = useState<Song[]>([]);
   const [index, setIndex] = useState(0);
@@ -339,31 +403,23 @@ export function StrokesQuizPanel({ options, data }: Props) {
   const [played, setPlayed] = useState(0);
   const [streak, setStreak] = useState({ current: 0, best: 0 });
   const [audioWarning, setAudioWarning] = useState<string | null>(null);
-
   const current = queue[index] ?? null;
-
   useEffect(() => {
     return () => player.stop();
   }, [player]);
-
-  const offsetFor = useCallback(
-    (song: Song) => Math.max(0, (song.startOffsetSeconds ?? 0) + extraSkip),
-    [extraSkip]
-  );
-
+  const offsetFor = useCallback((song: Song) => Math.max(0, (song.startOffsetSeconds ?? 0) + extraSkip), [extraSkip]);
   const playClip = useCallback(
     async (song: Song, seconds: number) => {
       const url = song.clipUrl;
       if (!url) {
-        setAudioWarning(`No clip bundled for "${song.title}". Drop ${song.id}.mp3 into src/audio/clips.`);
+        setAudioWarning(`No clip bundled for "${song.title}".`);
         return;
       }
       const ok = await player.play(url, offsetFor(song), seconds);
-      setAudioWarning(ok ? null : 'Playback blocked or the clip is unavailable. Check the audio file.');
+      setAudioWarning(ok ? null : 'Playback blocked or the clip is unavailable.');
     },
     [offsetFor, player]
   );
-
   const beginRound = useCallback(
     (song: Song) => {
       setPhase('playing');
@@ -375,7 +431,6 @@ export function StrokesQuizPanel({ options, data }: Props) {
     },
     [clipLengthSeconds, playClip]
   );
-
   const startGame = useCallback(() => {
     const nextQueue = buildQueue(playableSongs, rounds);
     if (nextQueue.length === 0) {
@@ -389,20 +444,17 @@ export function StrokesQuizPanel({ options, data }: Props) {
     setStreak({ current: 0, best: 0 });
     beginRound(nextQueue[0]);
   }, [beginRound, playableSongs, player, rounds]);
-
   const submitGuess = useCallback(
     (event: React.SyntheticEvent) => {
       event.preventDefault();
       if (phase !== 'playing' || !current || !guess.trim()) {
         return;
       }
-
       if (!isCorrectGuess(guess, current.title)) {
         setWrongGuesses((n) => n + 1);
         setVerdict('wrong');
         return;
       }
-
       setVerdict('correct');
       setScore((n) => n + 1);
       setPlayed((n) => n + 1);
@@ -415,7 +467,6 @@ export function StrokesQuizPanel({ options, data }: Props) {
     },
     [current, guess, phase, playClip, revealSeconds]
   );
-
   const revealAnswer = useCallback(() => {
     if (phase !== 'playing' || !current) {
       return;
@@ -426,7 +477,6 @@ export function StrokesQuizPanel({ options, data }: Props) {
     setPhase('reveal');
     void playClip(current, revealSeconds);
   }, [current, phase, playClip, revealSeconds]);
-
   const nextSong = useCallback(() => {
     player.stop();
     const nextIndex = index + 1;
@@ -437,62 +487,82 @@ export function StrokesQuizPanel({ options, data }: Props) {
     setIndex(nextIndex);
     beginRound(queue[nextIndex]);
   }, [beginRound, index, player, queue]);
-
-  const progressPct = queue.length > 0 ? Math.round((played / queue.length) * 100) : 0;
+  const toggleAudio = useCallback(() => {
+    if (audioState === 'playing') {
+      player.pause();
+      return;
+    }
+    if (audioState === 'paused') {
+      void player.resume();
+      return;
+    }
+    if (current) {
+      void playClip(current, clipLengthSeconds);
+    }
+  }, [audioState, clipLengthSeconds, current, playClip, player]);
   const accuracy = played > 0 ? Math.round((score / played) * 100) : 0;
-
   const renderScoreboard = () => (
-    <div className={styles.scoreboard}>
+    <div className={styles.meta}>
       {streak.current > 1 && (
-        <span className={styles.streak}>
-          <Icon name="fire" size="sm" />
-          {streak.current} in a row
-        </span>
+        <div className={styles.metaBlock}>
+          <span className={styles.metaLabel}>Streak</span>
+          <span className={styles.metaValue}>{streak.current}</span>
+        </div>
       )}
-      <div className={styles.scorePill} data-testid="strokes-score">
-        <span className={styles.scoreValue}>{score}</span>
-        <span className={styles.scoreLabel}> of {played}</span>
+      <div className={styles.metaBlock} data-testid="strokes-score">
+        <span className={styles.metaLabel}>Score</span>
+        <span className={styles.metaValue}>
+          {score} / {played}
+        </span>
       </div>
     </div>
   );
-
   const renderIdle = () => (
-    <div className={cx(styles.centerCard, showBackground && styles.cardSurface)}>
-      <h2 className={styles.idleHeadline}>How well do you know The Strokes?</h2>
-      <p className={styles.muted}>
-        {playableSongs.length} playable songs · {rounds} rounds · {clipLengthSeconds}s clips · {revealSeconds}s
-        reveal
-      </p>
-      <Button size="lg" icon="play" onClick={startGame} disabled={playableSongs.length === 0}>
+    <div className={styles.content}>
+      <h2 className={styles.headline}>How well do you know The Strokes?</h2>
+      <button className={styles.primary} onClick={startGame} disabled={playableSongs.length === 0}>
         Start the quiz
-      </Button>
+      </button>
       {playableSongs.length === 0 && (
-        <p className={styles.muted}>
-          No songs with audio. Drop a clip into src/audio/clips or attach the Strokes Catalog data source.
+        <p
+          className={cx(
+            styles.message,
+            css`
+              margin-top: 16px;
+            `
+          )}
+        >
+          No bundled audio clips were found.
         </p>
       )}
     </div>
   );
-
   const renderPlaying = () => {
     const hintAlbum = showHints && wrongGuesses >= 1;
     const hintTitle = showHints && wrongGuesses >= 2;
-
+    const audioLabel =
+      audioState === 'playing' ? 'Pause clip' : audioState === 'paused' ? 'Resume clip' : 'Replay clip';
+    const statusText = audioState === 'paused' ? 'Paused' : audioState === 'playing' ? 'Clip playing' : 'Clip finished';
     return (
-      <div className={cx(styles.playingCard, showBackground && styles.cardSurface)}>
-        <div className={styles.eq} aria-hidden>
-          {Array.from({ length: 7 }).map((_, i) => (
-            <span key={i} />
-          ))}
-        </div>
-        <p className={styles.muted}>
-          Song {index + 1} of {queue.length} — which track is this?
+      <div className={styles.content}>
+        <p className={styles.eyebrow}>
+          <span className={styles.eyebrowDot} />
+          Track {index + 1} of {queue.length}
         </p>
+        <h2 className={styles.prompt}>Which song is this?</h2>
 
-        <form className={styles.guessForm} onSubmit={submitGuess}>
-          <Input
+        <div className={styles.audioRow}>
+          <button className={styles.ghost} onClick={toggleAudio} data-testid="strokes-audio-toggle">
+            {audioLabel}
+          </button>
+          <span className={styles.status}>{statusText}</span>
+        </div>
+
+        <form className={styles.form} onSubmit={submitGuess}>
+          <input
+            className={cx(styles.input, verdict === 'wrong' && styles.inputWrong)}
             aria-label="Song title"
-            placeholder="Type the song title…"
+            placeholder="Song title"
             value={guess}
             onChange={(e) => {
               setGuess(e.currentTarget.value);
@@ -500,130 +570,118 @@ export function StrokesQuizPanel({ options, data }: Props) {
                 setVerdict('none');
               }
             }}
-            className={cx(verdict === 'wrong' && styles.shake)}
             autoFocus
           />
-          <Button type="submit" variant="primary" icon="arrow-right" disabled={!guess.trim()}>
-            Guess
-          </Button>
+          <div className={styles.actions}>
+            <button className={styles.primary} type="submit" disabled={!guess.trim()}>
+              Guess
+            </button>
+            <button className={styles.ghost} type="button" onClick={revealAnswer}>
+              Reveal answer
+            </button>
+          </div>
         </form>
 
         {hintAlbum && current && (
-          <div className={styles.hintBox}>
-            <span>
-              Hint · Album: <strong>{current.album}</strong> ({current.year})
+          <div className={styles.hints}>
+            <span className={styles.hintLine}>
+              <span className={styles.hintKey}>Album</span>
+              <span className={styles.hintStrong}>
+                {current.album} ({current.year})
+              </span>
             </span>
             {hintTitle && (
-              <span>
-                Hint · Title: <span className={styles.mask}>{maskTitle(current.title)}</span>
+              <span className={styles.hintLine}>
+                <span className={styles.hintKey}>Title</span>
+                <span className={styles.mask}>{maskTitle(current.title)}</span>
               </span>
             )}
           </div>
         )}
 
         {verdict === 'wrong' && (
-          <p className={styles.muted}>
-            Not quite.{' '}
-            {wrongGuesses >= maxGuesses ? 'Out of guesses — reveal it or keep trying.' : 'Try again.'}
+          <p className={styles.message}>
+            {wrongGuesses >= maxGuesses ? 'Out of guesses. Reveal it or keep trying.' : 'Not quite. Try again.'}
           </p>
         )}
 
-        {audioWarning && (
-          <div className={styles.warning}>
-            <Icon name="exclamation-triangle" size="sm" />
-            {audioWarning}
-          </div>
-        )}
-
-        <div className={styles.actions}>
-          <Button variant="secondary" size="sm" icon="repeat" onClick={() => current && playClip(current, clipLengthSeconds)}>
-            Replay clip
-          </Button>
-          <Button
-            variant="secondary"
-            size="sm"
-            icon="eye-slash"
-            onClick={revealAnswer}
-            className={cx(wrongGuesses >= maxGuesses && css`border-color: ${theme.colors.warning.border};`)}
-          >
-            Reveal answer
-          </Button>
-        </div>
+        {audioWarning && <p className={styles.warning}>{audioWarning}</p>}
       </div>
     );
   };
-
   const renderReveal = () => {
     if (!current) {
       return null;
     }
     const correct = verdict === 'correct';
-
     return (
-      <div className={cx(styles.revealCard, showBackground && styles.cardSurface)}>
-        <span className={cx(styles.badge, correct ? styles.badgeCorrect : styles.badgeMiss)}>
-          <Icon name={correct ? 'check' : 'info-circle'} size="sm" />
-          {correct ? 'Correct +1' : 'The answer was'}
-        </span>
+      <div className={styles.content}>
+        <p className={styles.eyebrow}>
+          <span className={styles.eyebrowDot} />
+          Track {index + 1} of {queue.length}
+        </p>
 
-        <div className={styles.revealGrid}>
+        <div className={styles.revealRow}>
           {showAlbumArt && (
-            <div className={styles.artWrap}>
+            <div className={styles.art}>
               <AlbumArt song={current} />
             </div>
           )}
           <div className={styles.revealText}>
-            <h3 className={styles.songTitle} data-testid="strokes-song-title">
+            <h3 className={styles.title} data-testid="strokes-song-title">
               {current.title}
             </h3>
-            <p className={styles.muted}>
+            <p className={styles.albumLine}>
               {current.album} · {current.year}
             </p>
             {current.startOffsetSeconds > 0 && (
-              <p className={styles.muted}>
-                <Icon name="history" size="sm" /> intro skipped: {current.startOffsetSeconds.toFixed(1)}s
-              </p>
+              <p className={styles.offsetLine}>Intro skipped {current.startOffsetSeconds.toFixed(1)}s</p>
             )}
+            <p className={cx(styles.verdictLine, !correct && styles.verdictMiss)}>
+              {correct ? 'Correct +1' : 'Answer revealed'}
+            </p>
+            <button className={cx(styles.primary, css`margin-top: 18px;`)} onClick={nextSong}>
+              {index + 1 >= queue.length ? 'See results' : 'Next song'}
+            </button>
           </div>
         </div>
-
-        <div className={styles.progressTrack} aria-hidden>
-          <div className={styles.progressFill} style={{ width: `${progressPct}%` }} />
-        </div>
-
-        <Button variant="primary" icon="arrow-right" onClick={nextSong}>
-          {index + 1 >= queue.length ? 'See results' : 'Next song'}
-        </Button>
       </div>
     );
   };
-
   const renderFinished = () => (
-    <div className={cx(styles.centerCard, showBackground && styles.cardSurface)}>
-      <p className={styles.muted}>Round complete</p>
-      <div className={styles.bigScore}>
-        {score}
-        <span style={{ fontSize: 22, color: theme.colors.text.secondary }}> / {queue.length}</span>
+    <div className={styles.content}>
+      <p className={styles.eyebrow}>
+        <span className={styles.eyebrowDot} />
+        Results
+      </p>
+      <div className={styles.resultScore}>
+        <span className={styles.scoreNumber}>{score}</span>
+        <span className={styles.scoreOf}>/ {queue.length}</span>
       </div>
-      <p className={styles.muted}>
+      <p className={styles.resultMeta}>
         {accuracy}% accuracy · best streak {streak.best}
       </p>
-      <p className={styles.muted}>
+      <p className={styles.resultLine}>
         {accuracy >= 90
           ? 'Certified Strokes scholar.'
           : accuracy >= 60
-            ? 'Solid — you know your way around Room on Fire.'
+            ? 'Solid. You know your way around Room on Fire.'
             : 'Time to revisit the discography.'}
       </p>
-      <Button size="lg" icon="repeat" onClick={startGame}>
+      <button className={styles.primary} onClick={startGame}>
         Play again
-      </Button>
+      </button>
     </div>
   );
-
   return (
     <div className={styles.root} style={backgroundStyle} data-testid="strokes-quiz-panel">
-      <div className={styles.header}>{phase !== 'idle' && renderScoreboard()}</div>
+      <header className={styles.header}>
+        <div className={styles.brand}>
+          <span className={styles.brandDot} />
+          The Strokes <span className={styles.brandDim}>/ Song Quiz</span>
+        </div>
+        {phase !== 'idle' && phase !== 'finished' && played > 0 && renderScoreboard()}
+      </header>
 
       <div className={styles.stage}>
         {phase === 'idle' && renderIdle()}
@@ -633,10 +691,10 @@ export function StrokesQuizPanel({ options, data }: Props) {
       </div>
 
       <div className={styles.footer}>
-        <span className={styles.credit}>{options.credit ?? 'Developed by Omer — Fall 2026'}</span>
+        <span className={styles.credit}>{options.credit ?? 'Developed by Ömer Faruk Ersakay'}</span>
         <span data-testid="strokes-catalog-status">
-          {source === 'datasource' ? 'songs: Strokes Catalog data source' : 'songs: built-in catalog'} ·{' '}
-          {playableSongs.length}/{songs.length} with audio
+          {source === 'datasource' ? 'Strokes Catalog data source' : 'Built-in catalog'} · {playableSongs.length}/
+          {songs.length} with audio
         </span>
       </div>
     </div>

@@ -1,40 +1,17 @@
 #!/usr/bin/env node
-/**
- * Single source of truth for the song catalog + placeholder audio.
- *
- * Run:  node tools/build-assets.mjs
- *
- * Writes:
- *   panel/src/catalog.json           - song metadata used by the panel (fallback + merge)
- *   datasource/src/songs.json        - the "mock JSON" the data source serves
- *   panel/src/audio/clips/<id>.wav   - placeholder clips for DEMO_PLACEHOLDERS only
- *
- * Real audio: drop <id>.mp3 (or .ogg/.m4a) into panel/src/audio/clips/ and it
- * wins over the .wav placeholder automatically (see src/audio/index.ts).
- * Songs without any audio file are skipped when building a game queue.
- */
 import { mkdirSync, readdirSync, writeFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const PANEL = join(ROOT, 'omer-strokesquiz-panel');
 const DS = join(ROOT, 'omer-strokesquiz-datasource');
 const CLIPS = join(PANEL, 'src', 'audio', 'clips');
-
-/**
- * Room on Fire tracks have a lead-in before the music actually starts, so the
- * whole album gets a default offset with per-track overrides where the intro is
- * longer than usual.
- */
 const ROOM_ON_FIRE_OFFSET = 1.2;
-
 const ROOM_ON_FIRE_OVERRIDES = {
   'what-ever-happened': 1.6,
   reptilia: 1.0,
   '12-51': 1.3,
 };
-
 const ALBUMS = [
   {
     album: 'Is This It',
@@ -48,10 +25,8 @@ const ALBUMS = [
       'Alone, Together',
       'Last Nite',
       'Hard to Explain',
-      'New York City Cops',
       'Trying Your Luck',
       'Take It or Leave It',
-      // US-edition track; it replaced "New York City Cops" on the 2001 release.
       'When It Started',
     ],
   },
@@ -162,14 +137,7 @@ const ALBUMS = [
     ],
   },
 ];
-
-/**
- * Real iTunes preview clips (30s) now ship with the repo, so no synthesised
- * placeholders are generated. To make a song playable without audio, add its id
- * here and rerun this script.
- */
 const DEMO_PLACEHOLDERS = new Set([]);
-
 function slugify(title) {
   const overrides = {
     "Dine N'Dash": 'dine-n-dash',
@@ -177,7 +145,6 @@ function slugify(title) {
   if (overrides[title]) {
     return overrides[title];
   }
-
   return title
     .toLowerCase()
     .replace(/['\u2019]/g, '')
@@ -185,13 +152,10 @@ function slugify(title) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
-
 const catalog = ALBUMS.flatMap(({ album, year, tracks, kind }) =>
   tracks.map((title) => {
     const id = slugify(title);
-    const startOffsetSeconds =
-      album === 'Room on Fire' ? (ROOM_ON_FIRE_OVERRIDES[id] ?? ROOM_ON_FIRE_OFFSET) : 0;
-
+    const startOffsetSeconds = album === 'Room on Fire' ? (ROOM_ON_FIRE_OVERRIDES[id] ?? ROOM_ON_FIRE_OFFSET) : 0;
     return {
       id,
       title,
@@ -204,16 +168,12 @@ const catalog = ALBUMS.flatMap(({ album, year, tracks, kind }) =>
     };
   })
 );
-
 const duplicates = catalog.map((s) => s.id).filter((id, i, all) => all.indexOf(id) !== i);
 if (duplicates.length) {
   throw new Error(`Duplicate song ids: ${[...new Set(duplicates)].join(', ')}`);
 }
-
-// ---------------------------------------------------------------- metadata ---
 mkdirSync(join(PANEL, 'src'), { recursive: true });
 mkdirSync(join(DS, 'src'), { recursive: true });
-
 const meta = catalog.map(({ id, title, album, albumKey, year, releaseType, startOffsetSeconds }) => ({
   id,
   title,
@@ -223,20 +183,15 @@ const meta = catalog.map(({ id, title, album, albumKey, year, releaseType, start
   releaseType,
   startOffsetSeconds,
 }));
-
 writeFileSync(join(PANEL, 'src', 'catalog.json'), JSON.stringify(meta, null, 2) + '\n');
 writeFileSync(
   join(DS, 'src', 'songs.json'),
   JSON.stringify({ generatedBy: 'tools/build-assets.mjs', songs: meta }, null, 2) + '\n'
 );
-
-// ------------------------------------------------------- placeholder audio ---
 mkdirSync(CLIPS, { recursive: true });
-
 const SAMPLE_RATE = 16000;
 const SECONDS = 20;
 const PENTATONIC = [0, 2, 4, 7, 9, 12, 14, 16];
-
 function writeWav(path, samples) {
   const dataSize = samples.length * 2;
   const buf = Buffer.alloc(44 + dataSize);
@@ -245,8 +200,8 @@ function writeWav(path, samples) {
   buf.write('WAVE', 8, 'ascii');
   buf.write('fmt ', 12, 'ascii');
   buf.writeUInt32LE(16, 16);
-  buf.writeUInt16LE(1, 20); // PCM
-  buf.writeUInt16LE(1, 22); // mono
+  buf.writeUInt16LE(1, 20);
+  buf.writeUInt16LE(1, 22);
   buf.writeUInt32LE(SAMPLE_RATE, 24);
   buf.writeUInt32LE(SAMPLE_RATE * 2, 28);
   buf.writeUInt16LE(2, 32);
@@ -258,7 +213,6 @@ function writeWav(path, samples) {
   });
   writeFileSync(path, buf);
 }
-
 function renderClip({ index, startOffsetSeconds }) {
   const total = SAMPLE_RATE * SECONDS;
   const out = new Float32Array(total);
@@ -267,7 +221,6 @@ function renderClip({ index, startOffsetSeconds }) {
   const noteMs = 190 + (index % 5) * 25;
   const noteLen = Math.floor((SAMPLE_RATE * noteMs) / 1000);
   const bassStep = noteLen * 4;
-
   for (let start = leadIn, n = 0; start < total; start += noteLen, n++) {
     const degree = PENTATONIC[(n * 3 + index) % PENTATONIC.length];
     const freq = root * 2 * Math.pow(2, degree / 12);
@@ -282,7 +235,6 @@ function renderClip({ index, startOffsetSeconds }) {
       out[i] += v * env;
     }
   }
-
   for (let start = leadIn; start < total; start += bassStep) {
     const end = Math.min(start + bassStep / 2, total);
     for (let i = start; i < end; i++) {
@@ -291,7 +243,6 @@ function renderClip({ index, startOffsetSeconds }) {
       out[i] += 0.18 * Math.sin(2 * Math.PI * (root / 2) * t) * env;
     }
   }
-
   const fade = SAMPLE_RATE * 0.05;
   for (let i = 0; i < fade; i++) {
     out[i] *= i / fade;
@@ -299,7 +250,6 @@ function renderClip({ index, startOffsetSeconds }) {
   }
   return out;
 }
-
 let created = 0;
 catalog
   .filter((song) => song.demoPlaceholder)
@@ -311,22 +261,17 @@ catalog
     writeWav(path, renderClip({ index, startOffsetSeconds: song.startOffsetSeconds }));
     created++;
   });
-
 const perAlbum = ALBUMS.map((a) => `${a.album}: ${a.tracks.length}`).join(', ');
 console.log(`catalog: ${catalog.length} songs across ${ALBUMS.length} releases`);
 console.log(perAlbum);
 console.log(`placeholder clips created: ${created} (skipped existing)`);
 console.log(`demo placeholders: ${DEMO_PLACEHOLDERS.size}`);
 console.log(`room on fire default offset: ${ROOM_ON_FIRE_OFFSET}s`);
-
-// A clip whose filename is not a catalog id can never be matched to a song
-// (the panel looks clips up by id), so surface it instead of ignoring it.
 const knownIds = new Set(catalog.map((song) => song.id));
 const orphans = readdirSync(CLIPS)
   .filter((file) => /\.(mp3|m4a|ogg|wav)$/i.test(file))
   .map((file) => file.replace(/\.[^.]+$/, ''))
   .filter((id) => !knownIds.has(id));
-
 if (orphans.length) {
   console.warn(`warning: clips with no matching song id: ${orphans.join(', ')}`);
 }

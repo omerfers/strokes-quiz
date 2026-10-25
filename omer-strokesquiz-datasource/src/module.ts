@@ -3,7 +3,6 @@ import { DataSource } from './datasource';
 import { ConfigEditor } from './components/ConfigEditor';
 import { QueryEditor } from './components/QueryEditor';
 import { StrokesDataSourceOptions, StrokesQuery } from './types';
-
 export const plugin = new DataSourcePlugin<DataSource, StrokesQuery, StrokesDataSourceOptions>(DataSource)
   .setConfigEditor(ConfigEditor)
   .setQueryEditor(QueryEditor);

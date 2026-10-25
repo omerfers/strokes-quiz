@@ -5,11 +5,16 @@
   "id": "omer-strokesquiz-datasource",
   "metrics": true,
   "info": {
-    "description": "Serves The Strokes song catalog (title, album, year, intro offset) bundled as mock JSON, with album filtering and row limiting. Developed by Omer — Fall 2026.",
+    "description": "Serves The Strokes song catalog (title, album, year, intro offset) bundled as mock JSON, with album filtering and row limiting. Developed by Ömer Faruk Ersakay.",
     "author": {
-      "name": "Omer"
+      "name": "Ömer Faruk Ersakay"
     },
-    "keywords": ["datasource", "music", "strokes", "catalog"],
+    "keywords": [
+      "datasource",
+      "music",
+      "strokes",
+      "catalog"
+    ],
     "logos": {
       "small": "img/logo.svg",
       "large": "img/logo.svg"
