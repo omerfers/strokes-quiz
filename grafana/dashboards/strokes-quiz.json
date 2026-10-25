@@ -1,0 +1,127 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "omer-strokesquiz-datasource",
+        "uid": "strokes-catalog"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 22,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "credit": "Developed by Omer — Fall 2026",
+        "rounds": 10,
+        "clipLengthSeconds": 10,
+        "revealSeconds": 15,
+        "extraIntroSkipSeconds": 0,
+        "maxGuesses": 3,
+        "showAlbumArt": true,
+        "showHints": true
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "album": "all",
+          "limit": 50
+        }
+      ],
+      "title": "The Strokes — Song Quiz",
+      "type": "omer-strokesquiz-panel"
+    },
+    {
+      "datasource": {
+        "type": "omer-strokesquiz-datasource",
+        "uid": "strokes-catalog"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "startOffsetSeconds"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 170
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 22,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false,
+          "reducer": [
+            "sum"
+          ],
+          "countRows": false,
+          "fields": ""
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "album": "all",
+          "limit": 50
+        }
+      ],
+      "title": "Song catalog (served by the data source)",
+      "type": "table"
+    }
+  ],
+  "preload": false,
+  "refresh": "",
+  "schemaVersion": 39,
+  "tags": [
+    "strokes",
+    "quiz",
+    "mis251"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "The Strokes — Song Quiz",
+  "uid": "strokes-quiz",
+  "version": 1,
+  "weekStart": ""
+}

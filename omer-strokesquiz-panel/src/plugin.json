@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
+  "type": "panel",
+  "name": "Strokes Song Quiz",
+  "id": "omer-strokesquiz-panel",
+  "info": {
+    "keywords": ["panel", "quiz", "music", "strokes", "game"],
+    "description": "Music guessing game: a random The Strokes clip plays, you name the track, and the album art plus score are shown. Developed by Omer — Fall 2026.",
+    "author": {
+      "name": "Omer"
+    },
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [],
+    "screenshots": [],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+  "dependencies": {
+    "grafanaDependency": ">=13.2.0",
+    "plugins": []
+  }
+}

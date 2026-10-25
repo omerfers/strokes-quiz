@@ -1,0 +1,18 @@
+# dependencies
+node_modules/
+
+# builds
+omer-strokesquiz-panel/dist/
+omer-strokesquiz-datasource/dist/
+
+# generated plugin drop-in folder
+plugins/
+
+# local Grafana runtime
+.grafana-dl/
+grafana/data/
+grafana/logs/
+
+# OS / editor
+.DS_Store
+*.log

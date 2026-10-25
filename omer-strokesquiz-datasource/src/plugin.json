@@ -1,0 +1,26 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
+  "type": "datasource",
+  "name": "Strokes Song Catalog",
+  "id": "omer-strokesquiz-datasource",
+  "metrics": true,
+  "info": {
+    "description": "Serves The Strokes song catalog (title, album, year, intro offset) bundled as mock JSON, with album filtering and row limiting. Developed by Omer — Fall 2026.",
+    "author": {
+      "name": "Omer"
+    },
+    "keywords": ["datasource", "music", "strokes", "catalog"],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [],
+    "screenshots": [],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+  "dependencies": {
+    "grafanaDependency": ">=13.2.0",
+    "plugins": []
+  }
+}

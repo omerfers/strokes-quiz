@@ -1,0 +1,10 @@
+apiVersion: 1
+
+datasources:
+  - name: Strokes Catalog
+    type: omer-strokesquiz-datasource
+    uid: strokes-catalog
+    access: proxy
+    isDefault: false
+    jsonData: {}
+    editable: true
