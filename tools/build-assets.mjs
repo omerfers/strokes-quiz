@@ -51,6 +51,8 @@ const ALBUMS = [
       'New York City Cops',
       'Trying Your Luck',
       'Take It or Leave It',
+      // US-edition track; it replaced "New York City Cops" on the 2001 release.
+      'When It Started',
     ],
   },
   {
@@ -162,30 +164,11 @@ const ALBUMS = [
 ];
 
 /**
- * Synthesised placeholders are only generated for these songs, to keep the repo
- * light. Every other catalog entry becomes playable as soon as you drop in a
- * real <id>.mp3 — no code change needed.
+ * Real iTunes preview clips (30s) now ship with the repo, so no synthesised
+ * placeholders are generated. To make a song playable without audio, add its id
+ * here and rerun this script.
  */
-const DEMO_PLACEHOLDERS = new Set([
-  'is-this-it',
-  'last-nite',
-  'hard-to-explain',
-  'what-ever-happened',
-  'reptilia',
-  '12-51',
-  'you-only-live-once',
-  'juicebox',
-  'heart-in-a-cage',
-  'machu-picchu',
-  'under-cover-of-darkness',
-  'taken-for-a-fool',
-  'tap-out',
-  'one-way-trigger',
-  'call-it-fate',
-  'the-adults-are-talking',
-  'at-the-door',
-  'ode-to-the-mets',
-]);
+const DEMO_PLACEHOLDERS = new Set([]);
 
 function slugify(title) {
   const overrides = {

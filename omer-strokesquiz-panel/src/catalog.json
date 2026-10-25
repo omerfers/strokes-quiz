@@ -99,6 +99,15 @@
     "startOffsetSeconds": 0
   },
   {
+    "id": "when-it-started",
+    "title": "When It Started",
+    "album": "Is This It",
+    "albumKey": "is-this-it",
+    "year": 2001,
+    "releaseType": "Album",
+    "startOffsetSeconds": 0
+  },
+  {
     "id": "what-ever-happened",
     "title": "What Ever Happened?",
     "album": "Room on Fire",
