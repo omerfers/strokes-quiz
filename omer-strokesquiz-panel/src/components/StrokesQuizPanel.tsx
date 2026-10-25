@@ -665,7 +665,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
         {accuracy >= 90
           ? 'Certified Strokes scholar.'
           : accuracy >= 60
-            ? 'Solid. You know your way around Room on Fire.'
+            ? 'Solid run. A few more listens and you will have it.'
             : 'Time to revisit the discography.'}
       </p>
       <button className={styles.primary} onClick={startGame}>
