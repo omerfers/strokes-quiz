@@ -31,11 +31,32 @@ and starts Grafana with `grafana/custom.ini`. Plugins are unsigned, so
 You do not need Docker: the repo uses a standalone Grafana 13.2.4 build in
 `.grafana-dl/` (see "Installing Grafana manually" if it is missing).
 
+## The catalog
+
+**78 songs across all 8 releases**, in release order:
+
+| Year | Release | Type | Songs |
+| --- | --- | --- | --- |
+| 2001 | Is This It | Album | 11 |
+| 2003 | Room on Fire | Album | 11 |
+| 2006 | First Impressions of Earth | Album | 14 |
+| 2011 | Angles | Album | 10 |
+| 2013 | Comedown Machine | Album | 11 |
+| 2016 | Future Present Past | EP | 3 |
+| 2020 | The New Abnormal | Album | 9 |
+| 2026 | Reality Awaits | Album | 9 |
+
+The data source serves the whole catalog. The **game**, however, only queues
+songs that actually have a clip bundled: 18 placeholder clips ship with the
+repo, so the idle screen reads "18 playable songs" and the footer shows
+`18/78 with audio`. Add real audio for a song and it becomes playable
+automatically — no code change.
+
 ## Screenshots
 
-| Listening | Correct guess |
-| --- | --- |
-| ![Listening](docs/screenshots/01-playing.png) | ![Reveal](docs/screenshots/03-correct.png) |
+| Idle | Listening | Correct guess |
+| --- | --- | --- |
+| ![Idle](docs/screenshots/00-idle.png) | ![Listening](docs/screenshots/01-playing.png) | ![Reveal](docs/screenshots/03-correct.png) |
 
 | Revealing the answer |
 | --- |
@@ -56,7 +77,7 @@ node tools/smoke.mjs
 
 | Step | Behaviour |
 | --- | --- |
-| Start | 10 songs are shuffled into a queue (configurable) |
+| Start | 10 playable songs (ones with a bundled clip) are shuffled into a queue (configurable) |
 | Listen | A clip plays for 10s from the song's start offset |
 | Guess | Type the title; accents, case, punctuation and a leading "The" are ignored |
 | Hints | 1st miss reveals album + year, 2nd reveals the title pattern |
@@ -68,21 +89,24 @@ Everything is local: no backend, no external API, no network calls at runtime.
 ## Room on Fire intro offset
 
 Songs from *Room on Fire* (2003) have a lead-in before the music starts, so every
-song carries a `startOffsetSeconds` field:
+song carries a `startOffsetSeconds` field. The whole album defaults to **1.2s**,
+with per-track overrides where the intro runs longer:
 
 | Song | Offset |
 | --- | --- |
 | What Ever Happened? | 1.6s |
 | Reptilia | 1.0s |
 | 12:51 | 1.3s |
+| Every other Room on Fire track | 1.2s |
 
 Non-*Room on Fire* songs default to `0`. The offset is applied to both the
 guessing clip and the reveal, and `ClipPlayer` clamps it so a short clip can
 never seek past its own end. A panel option (**Extra intro skip**) adds a global
 nudge if a clip still starts silent.
 
-To change the values, edit [`tools/build-assets.mjs`](tools/build-assets.mjs) and
-run `node tools/build-assets.mjs`.
+To change the values, edit `ROOM_ON_FIRE_OFFSET` / `ROOM_ON_FIRE_OVERRIDES` in
+[`tools/build-assets.mjs`](tools/build-assets.mjs) and run
+`node tools/build-assets.mjs`.
 
 ## Adding real audio
 
@@ -97,19 +121,28 @@ omer-strokesquiz-panel/src/audio/clips/last-nite.mp3
 
 `src/audio/index.ts` resolves every clip in that folder and prefers
 `mp3 > m4a > ogg > wav`, so a real mp3 silently replaces the placeholder — no
-code change. Rebuild with `./tools/dev.sh`.
+code change. The file name **must** be the song id. Rebuild with `./tools/dev.sh`.
 
 Song ids are in [`omer-strokesquiz-panel/src/catalog.json`](omer-strokesquiz-panel/src/catalog.json).
+You do not need to trim the tracks: the player seeks to the song's intro offset
+and stops after the configured clip/reveal length, so full-length files work.
+
+Only the 18 songs in `DEMO_PLACEHOLDERS` have a placeholder `.wav`; the other 60
+become playable the moment you add their audio file, because the game pool is
+built from songs whose clip resolves. `node tools/build-assets.mjs` prints a
+warning if a clip file name does not match any catalog id.
 
 > **Copyright:** short clips only, and keep unlicensed audio out of the submitted
 > git repository if you can — the plugin works with placeholders for the demo.
 
 ## Adding songs
 
-1. Add the song to the `catalog` array in `tools/build-assets.mjs`.
-2. `node tools/build-assets.mjs` — rewrites both catalogs and creates a placeholder clip.
-3. Drop the real audio file in `src/audio/clips/<id>.mp3` (optional).
-4. `./tools/dev.sh`
+1. Add the title to the matching release's `tracks` array in the `ALBUMS` list in
+   `tools/build-assets.mjs` (add a new release object if needed).
+2. Add its id to `DEMO_PLACEHOLDERS` only if you want a synthesised placeholder.
+3. `node tools/build-assets.mjs` — rewrites both catalogs and prints the counts.
+4. Drop the real audio file in `src/audio/clips/<id>.mp3` (optional).
+5. `./tools/dev.sh`
 
 The panel uses the data source when one is attached, and falls back to the
 catalog bundled in `catalog.json` otherwise — so it never shows an empty screen.
@@ -119,20 +152,24 @@ catalog bundled in `catalog.json` otherwise — so it never shows an empty scree
 ```
 strokes-quiz/
 ├── omer-strokesquiz-panel/        # panel plugin (game)
+│   ├── webpack.config.ts          # extends .config/webpack with the audio rule
 │   ├── src/components/StrokesQuizPanel.tsx
 │   ├── src/components/AlbumArt.tsx
 │   ├── src/audio/index.ts         # require.context clip resolver
 │   ├── src/audio/player.ts        # offset-aware HTMLAudioElement wrapper
 │   ├── src/audio/clips/           # audio (wav placeholders + your mp3s)
 │   ├── src/catalog.json           # generated song metadata
-│   └── src/utils/answer.ts        # answer normalisation
+│   ├── src/utils/answer.ts        # answer normalisation
+│   └── src/utils/queue.ts         # shuffle + round queue
 ├── omer-strokesquiz-datasource/   # data source plugin (catalog)
 │   └── src/songs.json             # generated "mock JSON" endpoint
 ├── grafana/                       # custom.ini, provisioning, dashboard JSON
 ├── plugins/                       # built plugins loaded by Grafana (generated)
 └── tools/
     ├── build-assets.mjs           # catalog + placeholder audio generator
-    └── dev.sh                     # build + sync + run Grafana
+    ├── sync.sh                    # build both plugins into ./plugins
+    ├── dev.sh                     # sync + run Grafana
+    └── smoke.mjs                  # headless end-to-end check + screenshots
 ```
 
 ## Course requirement mapping
@@ -148,7 +185,7 @@ strokes-quiz/
 | Panel bonus: interactivity | Keyboard submit, hover states, replay, shake feedback |
 | Data source bonus: mock JSON | `src/songs.json` |
 | Data source bonus: query params | Album filter + row limit in the query editor |
-| Data source bonus: table format | Six string/number fields, table visualisation |
+| Data source bonus: table format | Five fields (id, title, album, year, intro offset), table visualisation |
 | Data source bonus: error handling | `query()` returns `LoadingState.Error`; `testDatasource()` validates the catalog |
 | Git repo bonus | This repository |
 | Docs + demo video | This README + your recording |

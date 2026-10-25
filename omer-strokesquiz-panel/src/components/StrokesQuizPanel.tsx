@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { PanelProps } from '@grafana/data';
 import { css, cx, keyframes } from '@emotion/css';
 import { Button, Icon, Input, useStyles2, useTheme2 } from '@grafana/ui';
@@ -294,6 +294,9 @@ export function StrokesQuizPanel({ options, data }: Props) {
   const styles = useStyles2(getStyles);
 
   const { songs, source } = useMemo(() => resolveSongs(data), [data]);
+  // Only songs with a bundled clip can actually be played, so they are the only
+  // ones allowed into a round. The rest of the catalog still shows in the table.
+  const playableSongs = useMemo(() => songs.filter((song) => Boolean(song.clipUrl)), [songs]);
 
   const rounds = Math.max(1, options.rounds ?? 10);
   const clipLengthSeconds = Math.max(1, options.clipLengthSeconds ?? 10);
@@ -303,10 +306,9 @@ export function StrokesQuizPanel({ options, data }: Props) {
   const showHints = options.showHints ?? true;
   const showAlbumArt = options.showAlbumArt ?? true;
 
-  const playerRef = useRef<ClipPlayer | null>(null);
-  if (!playerRef.current) {
-    playerRef.current = new ClipPlayer();
-  }
+  // One player instance for the lifetime of the panel; the lazy initializer
+  // keeps it stable across renders without touching a ref during render.
+  const [player] = useState(() => new ClipPlayer());
 
   const [phase, setPhase] = useState<Phase>('idle');
   const [queue, setQueue] = useState<Song[]>([]);
@@ -322,9 +324,8 @@ export function StrokesQuizPanel({ options, data }: Props) {
   const current = queue[index] ?? null;
 
   useEffect(() => {
-    const player = playerRef.current;
-    return () => player?.stop();
-  }, []);
+    return () => player.stop();
+  }, [player]);
 
   const offsetFor = useCallback(
     (song: Song) => Math.max(0, (song.startOffsetSeconds ?? 0) + extraSkip),
@@ -338,10 +339,10 @@ export function StrokesQuizPanel({ options, data }: Props) {
         setAudioWarning(`No clip bundled for "${song.title}". Drop ${song.id}.mp3 into src/audio/clips.`);
         return;
       }
-      const ok = await playerRef.current?.play(url, offsetFor(song), seconds);
+      const ok = await player.play(url, offsetFor(song), seconds);
       setAudioWarning(ok ? null : 'Playback blocked or the clip is unavailable. Check the audio file.');
     },
-    [offsetFor]
+    [offsetFor, player]
   );
 
   const beginRound = useCallback(
@@ -357,21 +358,21 @@ export function StrokesQuizPanel({ options, data }: Props) {
   );
 
   const startGame = useCallback(() => {
-    const nextQueue = buildQueue(songs, rounds);
+    const nextQueue = buildQueue(playableSongs, rounds);
     if (nextQueue.length === 0) {
       return;
     }
-    playerRef.current?.stop();
+    player.stop();
     setQueue(nextQueue);
     setIndex(0);
     setScore(0);
     setPlayed(0);
     setStreak({ current: 0, best: 0 });
     beginRound(nextQueue[0]);
-  }, [beginRound, rounds, songs]);
+  }, [beginRound, playableSongs, player, rounds]);
 
   const submitGuess = useCallback(
-    (event: React.FormEvent) => {
+    (event: React.SyntheticEvent) => {
       event.preventDefault();
       if (phase !== 'playing' || !current || !guess.trim()) {
         return;
@@ -408,7 +409,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
   }, [current, phase, playClip, revealSeconds]);
 
   const nextSong = useCallback(() => {
-    playerRef.current?.stop();
+    player.stop();
     const nextIndex = index + 1;
     if (nextIndex >= queue.length) {
       setPhase('finished');
@@ -416,7 +417,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
     }
     setIndex(nextIndex);
     beginRound(queue[nextIndex]);
-  }, [beginRound, index, queue]);
+  }, [beginRound, index, player, queue]);
 
   const progressPct = queue.length > 0 ? Math.round((played / queue.length) * 100) : 0;
   const accuracy = played > 0 ? Math.round((score / played) * 100) : 0;
@@ -440,12 +441,17 @@ export function StrokesQuizPanel({ options, data }: Props) {
     <div className={styles.centerCard}>
       <h2 className={styles.idleHeadline}>How well do you know The Strokes?</h2>
       <p className={styles.muted}>
-        {songs.length} songs · {rounds} rounds · {clipLengthSeconds}s clips · {revealSeconds}s reveal
+        {playableSongs.length} playable songs · {rounds} rounds · {clipLengthSeconds}s clips · {revealSeconds}s
+        reveal
       </p>
-      <Button size="lg" icon="play" onClick={startGame} disabled={songs.length === 0}>
+      <Button size="lg" icon="play" onClick={startGame} disabled={playableSongs.length === 0}>
         Start the quiz
       </Button>
-      {songs.length === 0 && <p className={styles.muted}>No songs available. Attach the Strokes Catalog data source.</p>}
+      {playableSongs.length === 0 && (
+        <p className={styles.muted}>
+          No songs with audio. Drop a clip into src/audio/clips or attach the Strokes Catalog data source.
+        </p>
+      )}
     </div>
   );
 
@@ -609,8 +615,9 @@ export function StrokesQuizPanel({ options, data }: Props) {
 
       <div className={styles.footer}>
         <span className={styles.credit}>{options.credit ?? 'Developed by Omer — Fall 2026'}</span>
-        <span>
-          {source === 'datasource' ? 'songs: Strokes Catalog data source' : 'songs: built-in catalog'}
+        <span data-testid="strokes-catalog-status">
+          {source === 'datasource' ? 'songs: Strokes Catalog data source' : 'songs: built-in catalog'} ·{' '}
+          {playableSongs.length}/{songs.length} with audio
         </span>
       </div>
     </div>

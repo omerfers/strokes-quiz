@@ -7,6 +7,52 @@
       "album": "Is This It",
       "albumKey": "is-this-it",
       "year": 2001,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "the-modern-age",
+      "title": "The Modern Age",
+      "album": "Is This It",
+      "albumKey": "is-this-it",
+      "year": 2001,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "soma",
+      "title": "Soma",
+      "album": "Is This It",
+      "albumKey": "is-this-it",
+      "year": 2001,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "barely-legal",
+      "title": "Barely Legal",
+      "album": "Is This It",
+      "albumKey": "is-this-it",
+      "year": 2001,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "someday",
+      "title": "Someday",
+      "album": "Is This It",
+      "albumKey": "is-this-it",
+      "year": 2001,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "alone-together",
+      "title": "Alone, Together",
+      "album": "Is This It",
+      "albumKey": "is-this-it",
+      "year": 2001,
+      "releaseType": "Album",
       "startOffsetSeconds": 0
     },
     {
@@ -15,6 +61,7 @@
       "album": "Is This It",
       "albumKey": "is-this-it",
       "year": 2001,
+      "releaseType": "Album",
       "startOffsetSeconds": 0
     },
     {
@@ -23,6 +70,34 @@
       "album": "Is This It",
       "albumKey": "is-this-it",
       "year": 2001,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "new-york-city-cops",
+      "title": "New York City Cops",
+      "album": "Is This It",
+      "albumKey": "is-this-it",
+      "year": 2001,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "trying-your-luck",
+      "title": "Trying Your Luck",
+      "album": "Is This It",
+      "albumKey": "is-this-it",
+      "year": 2001,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "take-it-or-leave-it",
+      "title": "Take It or Leave It",
+      "album": "Is This It",
+      "albumKey": "is-this-it",
+      "year": 2001,
+      "releaseType": "Album",
       "startOffsetSeconds": 0
     },
     {
@@ -31,6 +106,7 @@
       "album": "Room on Fire",
       "albumKey": "room-on-fire",
       "year": 2003,
+      "releaseType": "Album",
       "startOffsetSeconds": 1.6
     },
     {
@@ -39,7 +115,17 @@
       "album": "Room on Fire",
       "albumKey": "room-on-fire",
       "year": 2003,
+      "releaseType": "Album",
       "startOffsetSeconds": 1
+    },
+    {
+      "id": "automatic-stop",
+      "title": "Automatic Stop",
+      "album": "Room on Fire",
+      "albumKey": "room-on-fire",
+      "year": 2003,
+      "releaseType": "Album",
+      "startOffsetSeconds": 1.2
     },
     {
       "id": "12-51",
@@ -47,7 +133,71 @@
       "album": "Room on Fire",
       "albumKey": "room-on-fire",
       "year": 2003,
+      "releaseType": "Album",
       "startOffsetSeconds": 1.3
+    },
+    {
+      "id": "you-talk-way-too-much",
+      "title": "You Talk Way Too Much",
+      "album": "Room on Fire",
+      "albumKey": "room-on-fire",
+      "year": 2003,
+      "releaseType": "Album",
+      "startOffsetSeconds": 1.2
+    },
+    {
+      "id": "between-love-and-hate",
+      "title": "Between Love & Hate",
+      "album": "Room on Fire",
+      "albumKey": "room-on-fire",
+      "year": 2003,
+      "releaseType": "Album",
+      "startOffsetSeconds": 1.2
+    },
+    {
+      "id": "meet-me-in-the-bathroom",
+      "title": "Meet Me in the Bathroom",
+      "album": "Room on Fire",
+      "albumKey": "room-on-fire",
+      "year": 2003,
+      "releaseType": "Album",
+      "startOffsetSeconds": 1.2
+    },
+    {
+      "id": "under-control",
+      "title": "Under Control",
+      "album": "Room on Fire",
+      "albumKey": "room-on-fire",
+      "year": 2003,
+      "releaseType": "Album",
+      "startOffsetSeconds": 1.2
+    },
+    {
+      "id": "the-way-it-is",
+      "title": "The Way It Is",
+      "album": "Room on Fire",
+      "albumKey": "room-on-fire",
+      "year": 2003,
+      "releaseType": "Album",
+      "startOffsetSeconds": 1.2
+    },
+    {
+      "id": "the-end-has-no-end",
+      "title": "The End Has No End",
+      "album": "Room on Fire",
+      "albumKey": "room-on-fire",
+      "year": 2003,
+      "releaseType": "Album",
+      "startOffsetSeconds": 1.2
+    },
+    {
+      "id": "i-cant-win",
+      "title": "I Can't Win",
+      "album": "Room on Fire",
+      "albumKey": "room-on-fire",
+      "year": 2003,
+      "releaseType": "Album",
+      "startOffsetSeconds": 1.2
     },
     {
       "id": "you-only-live-once",
@@ -55,6 +205,7 @@
       "album": "First Impressions of Earth",
       "albumKey": "first-impressions-of-earth",
       "year": 2006,
+      "releaseType": "Album",
       "startOffsetSeconds": 0
     },
     {
@@ -63,6 +214,7 @@
       "album": "First Impressions of Earth",
       "albumKey": "first-impressions-of-earth",
       "year": 2006,
+      "releaseType": "Album",
       "startOffsetSeconds": 0
     },
     {
@@ -71,6 +223,106 @@
       "album": "First Impressions of Earth",
       "albumKey": "first-impressions-of-earth",
       "year": 2006,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "razorblade",
+      "title": "Razorblade",
+      "album": "First Impressions of Earth",
+      "albumKey": "first-impressions-of-earth",
+      "year": 2006,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "on-the-other-side",
+      "title": "On the Other Side",
+      "album": "First Impressions of Earth",
+      "albumKey": "first-impressions-of-earth",
+      "year": 2006,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "vision-of-division",
+      "title": "Vision of Division",
+      "album": "First Impressions of Earth",
+      "albumKey": "first-impressions-of-earth",
+      "year": 2006,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "ask-me-anything",
+      "title": "Ask Me Anything",
+      "album": "First Impressions of Earth",
+      "albumKey": "first-impressions-of-earth",
+      "year": 2006,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "electricityscape",
+      "title": "Electricityscape",
+      "album": "First Impressions of Earth",
+      "albumKey": "first-impressions-of-earth",
+      "year": 2006,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "killing-lies",
+      "title": "Killing Lies",
+      "album": "First Impressions of Earth",
+      "albumKey": "first-impressions-of-earth",
+      "year": 2006,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "fear-of-sleep",
+      "title": "Fear of Sleep",
+      "album": "First Impressions of Earth",
+      "albumKey": "first-impressions-of-earth",
+      "year": 2006,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "15-minutes",
+      "title": "15 Minutes",
+      "album": "First Impressions of Earth",
+      "albumKey": "first-impressions-of-earth",
+      "year": 2006,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "ize-of-the-world",
+      "title": "Ize of the World",
+      "album": "First Impressions of Earth",
+      "albumKey": "first-impressions-of-earth",
+      "year": 2006,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "evening-sun",
+      "title": "Evening Sun",
+      "album": "First Impressions of Earth",
+      "albumKey": "first-impressions-of-earth",
+      "year": 2006,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "red-light",
+      "title": "Red Light",
+      "album": "First Impressions of Earth",
+      "albumKey": "first-impressions-of-earth",
+      "year": 2006,
+      "releaseType": "Album",
       "startOffsetSeconds": 0
     },
     {
@@ -79,6 +331,7 @@
       "album": "Angles",
       "albumKey": "angles",
       "year": 2011,
+      "releaseType": "Album",
       "startOffsetSeconds": 0
     },
     {
@@ -87,6 +340,25 @@
       "album": "Angles",
       "albumKey": "angles",
       "year": 2011,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "two-kinds-of-happiness",
+      "title": "Two Kinds of Happiness",
+      "album": "Angles",
+      "albumKey": "angles",
+      "year": 2011,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "youre-so-right",
+      "title": "You're So Right",
+      "album": "Angles",
+      "albumKey": "angles",
+      "year": 2011,
+      "releaseType": "Album",
       "startOffsetSeconds": 0
     },
     {
@@ -95,6 +367,52 @@
       "album": "Angles",
       "albumKey": "angles",
       "year": 2011,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "games",
+      "title": "Games",
+      "album": "Angles",
+      "albumKey": "angles",
+      "year": 2011,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "call-me-back",
+      "title": "Call Me Back",
+      "album": "Angles",
+      "albumKey": "angles",
+      "year": 2011,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "gratisfaction",
+      "title": "Gratisfaction",
+      "album": "Angles",
+      "albumKey": "angles",
+      "year": 2011,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "metabolism",
+      "title": "Metabolism",
+      "album": "Angles",
+      "albumKey": "angles",
+      "year": 2011,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "life-is-simple-in-the-moonlight",
+      "title": "Life Is Simple in the Moonlight",
+      "album": "Angles",
+      "albumKey": "angles",
+      "year": 2011,
+      "releaseType": "Album",
       "startOffsetSeconds": 0
     },
     {
@@ -103,6 +421,16 @@
       "album": "Comedown Machine",
       "albumKey": "comedown-machine",
       "year": 2013,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "all-the-time",
+      "title": "All the Time",
+      "album": "Comedown Machine",
+      "albumKey": "comedown-machine",
+      "year": 2013,
+      "releaseType": "Album",
       "startOffsetSeconds": 0
     },
     {
@@ -111,14 +439,106 @@
       "album": "Comedown Machine",
       "albumKey": "comedown-machine",
       "year": 2013,
+      "releaseType": "Album",
       "startOffsetSeconds": 0
     },
     {
-      "id": "call-it-fate",
+      "id": "welcome-to-japan",
+      "title": "Welcome to Japan",
+      "album": "Comedown Machine",
+      "albumKey": "comedown-machine",
+      "year": 2013,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "80s-comedown-machine",
+      "title": "80's Comedown Machine",
+      "album": "Comedown Machine",
+      "albumKey": "comedown-machine",
+      "year": 2013,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "50-50",
+      "title": "50/50",
+      "album": "Comedown Machine",
+      "albumKey": "comedown-machine",
+      "year": 2013,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "slow-animals",
+      "title": "Slow Animals",
+      "album": "Comedown Machine",
+      "albumKey": "comedown-machine",
+      "year": 2013,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "partners-in-crime",
+      "title": "Partners in Crime",
+      "album": "Comedown Machine",
+      "albumKey": "comedown-machine",
+      "year": 2013,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "chances",
+      "title": "Chances",
+      "album": "Comedown Machine",
+      "albumKey": "comedown-machine",
+      "year": 2013,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "happy-ending",
+      "title": "Happy Ending",
+      "album": "Comedown Machine",
+      "albumKey": "comedown-machine",
+      "year": 2013,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "call-it-fate-call-it-karma",
       "title": "Call It Fate, Call It Karma",
       "album": "Comedown Machine",
       "albumKey": "comedown-machine",
       "year": 2013,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "drag-queen",
+      "title": "Drag Queen",
+      "album": "Future Present Past",
+      "albumKey": "future-present-past",
+      "year": 2016,
+      "releaseType": "EP",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "oblivius",
+      "title": "Oblivius",
+      "album": "Future Present Past",
+      "albumKey": "future-present-past",
+      "year": 2016,
+      "releaseType": "EP",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "threat-of-joy",
+      "title": "Threat of Joy",
+      "album": "Future Present Past",
+      "albumKey": "future-present-past",
+      "year": 2016,
+      "releaseType": "EP",
       "startOffsetSeconds": 0
     },
     {
@@ -127,6 +547,43 @@
       "album": "The New Abnormal",
       "albumKey": "the-new-abnormal",
       "year": 2020,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "selfless",
+      "title": "Selfless",
+      "album": "The New Abnormal",
+      "albumKey": "the-new-abnormal",
+      "year": 2020,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "brooklyn-bridge-to-chorus",
+      "title": "Brooklyn Bridge to Chorus",
+      "album": "The New Abnormal",
+      "albumKey": "the-new-abnormal",
+      "year": 2020,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "bad-decisions",
+      "title": "Bad Decisions",
+      "album": "The New Abnormal",
+      "albumKey": "the-new-abnormal",
+      "year": 2020,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "eternal-summer",
+      "title": "Eternal Summer",
+      "album": "The New Abnormal",
+      "albumKey": "the-new-abnormal",
+      "year": 2020,
+      "releaseType": "Album",
       "startOffsetSeconds": 0
     },
     {
@@ -135,6 +592,25 @@
       "album": "The New Abnormal",
       "albumKey": "the-new-abnormal",
       "year": 2020,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "why-are-sundays-so-depressing",
+      "title": "Why Are Sundays So Depressing",
+      "album": "The New Abnormal",
+      "albumKey": "the-new-abnormal",
+      "year": 2020,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "not-the-same-anymore",
+      "title": "Not the Same Anymore",
+      "album": "The New Abnormal",
+      "albumKey": "the-new-abnormal",
+      "year": 2020,
+      "releaseType": "Album",
       "startOffsetSeconds": 0
     },
     {
@@ -143,6 +619,88 @@
       "album": "The New Abnormal",
       "albumKey": "the-new-abnormal",
       "year": 2020,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "psycho-shit",
+      "title": "Psycho Shit",
+      "album": "Reality Awaits",
+      "albumKey": "reality-awaits",
+      "year": 2026,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "dine-n-dash",
+      "title": "Dine N'Dash",
+      "album": "Reality Awaits",
+      "albumKey": "reality-awaits",
+      "year": 2026,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "lonely-in-the-future",
+      "title": "Lonely in the Future",
+      "album": "Reality Awaits",
+      "albumKey": "reality-awaits",
+      "year": 2026,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "falling-out-of-love",
+      "title": "Falling Out of Love",
+      "album": "Reality Awaits",
+      "albumKey": "reality-awaits",
+      "year": 2026,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "going-to-babble-on",
+      "title": "Going to Babble On",
+      "album": "Reality Awaits",
+      "albumKey": "reality-awaits",
+      "year": 2026,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "going-shopping",
+      "title": "Going Shopping",
+      "album": "Reality Awaits",
+      "albumKey": "reality-awaits",
+      "year": 2026,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "liars-remorse",
+      "title": "Liar's Remorse",
+      "album": "Reality Awaits",
+      "albumKey": "reality-awaits",
+      "year": 2026,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "the-fruits-of-conquest",
+      "title": "The Fruits of Conquest",
+      "album": "Reality Awaits",
+      "albumKey": "reality-awaits",
+      "year": 2026,
+      "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "tyrants-of-the-mellow-moon",
+      "title": "Tyrants of the Mellow Moon",
+      "album": "Reality Awaits",
+      "albumKey": "reality-awaits",
+      "year": 2026,
+      "releaseType": "Album",
       "startOffsetSeconds": 0
     }
   ]

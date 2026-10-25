@@ -12,7 +12,9 @@ const ART: Record<string, { from: string; to: string; ink: string }> = {
   'first-impressions-of-earth': { from: '#1e3a8a', to: '#0b0f19', ink: '#93c5fd' },
   angles: { from: '#581c87', to: '#0b0f19', ink: '#d8b4fe' },
   'comedown-machine': { from: '#115e59', to: '#0b0f19', ink: '#5eead4' },
+  'future-present-past': { from: '#9f1239', to: '#0b0f19', ink: '#fda4af' },
   'the-new-abnormal': { from: '#831843', to: '#0b0f19', ink: '#f9a8d4' },
+  'reality-awaits': { from: '#8a5a2b', to: '#0b0f19', ink: '#fcd9a3' },
 };
 
 const FALLBACK = { from: '#374151', to: '#0b0f19', ink: '#e5e7eb' };

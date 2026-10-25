@@ -37,7 +37,7 @@
         {
           "refId": "A",
           "album": "all",
-          "limit": 50
+          "limit": 100
         }
       ],
       "title": "The Strokes — Song Quiz",
@@ -62,12 +62,60 @@
           {
             "matcher": {
               "id": "byName",
+              "options": "id"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 190
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "title"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 180
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "album"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 175
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "year"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 64
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
               "options": "startOffsetSeconds"
             },
             "properties": [
               {
                 "id": "custom.width",
-                "value": 170
+                "value": 150
               }
             ]
           }
@@ -96,7 +144,7 @@
         {
           "refId": "A",
           "album": "all",
-          "limit": 50
+          "limit": 100
         }
       ],
       "title": "Song catalog (served by the data source)",

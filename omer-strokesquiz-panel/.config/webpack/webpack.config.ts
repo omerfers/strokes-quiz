@@ -117,14 +117,6 @@ const config = async (env: Env): Promise<Configuration> => {
           },
         },
         {
-          // Bundled audio clips: imported as URLs and played through HTMLAudioElement.
-          test: /\.(mp3|m4a|ogg|wav)$/,
-          type: 'asset/resource',
-          generator: {
-            filename: Boolean(env.production) ? '[hash][ext]' : '[name][ext]',
-          },
-        },
-        {
           test: /\.(woff|woff2|eot|ttf|otf)(\?v=\d+\.\d+\.\d+)?$/,
           type: 'asset/resource',
           generator: {
