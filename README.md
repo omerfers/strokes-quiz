@@ -55,7 +55,7 @@ You do not need Docker: the repo uses a standalone Grafana 13.2.4 build in
 
 The data source serves the whole catalog, and every song has a 30-second iTunes
 preview bundled with the panel, so the footer reads `78/78 with audio` and any
-song in the table can come up in a round.
+song in the catalog can come up in a round.
 
 ## Screenshots
 
@@ -209,7 +209,7 @@ strokes-quiz/
 | Panel bonus: interactivity | Start, guess with Enter, pause/resume, reveal, next, play again, hover states |
 | Data source bonus: mock JSON | `src/songs.json` |
 | Data source bonus: query params | Album filter + row limit in the query editor |
-| Data source bonus: table format | Five fields (id, title, album, year, intro offset), table visualisation |
+| Data source bonus: table format | Five fields (id, title, album, year, intro offset), table frame (`preferredVisualisationType: 'table'`) |
 | Data source bonus: error handling | `query()` returns `LoadingState.Error`; `testDatasource()` validates the catalog |
 | Git repo bonus | This repository |
 | Docs + demo video | This README + your recording |

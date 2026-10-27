@@ -17,7 +17,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 16,
+        "h": 22,
         "w": 24,
         "x": 0,
         "y": 0
@@ -59,7 +59,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 16
+        "y": 22
       },
       "options": {
         "mode": "html",
@@ -71,113 +71,6 @@
         }
       },
       "targets": []
-    },
-    {
-      "datasource": {
-        "type": "omer-strokesquiz-datasource",
-        "uid": "strokes-catalog"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "id"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 190
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "title"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 180
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "album"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 175
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "year"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 64
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "startOffsetSeconds"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 150
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 17
-      },
-      "id": 2,
-      "options": {
-        "showHeader": true,
-        "cellHeight": "sm",
-        "footer": {
-          "show": false,
-          "reducer": [
-            "sum"
-          ],
-          "countRows": false,
-          "fields": ""
-        }
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "album": "all",
-          "limit": 100
-        }
-      ],
-      "title": "Song catalog (served by the data source)",
-      "type": "table"
     }
   ],
   "preload": false,
@@ -195,7 +88,9 @@
     "from": "now-6h",
     "to": "now"
   },
-  "timepicker": {},
+  "timepicker": {
+    "hidden": true
+  },
   "timezone": "browser",
   "title": "The Strokes — Song Quiz",
   "uid": "strokes-quiz",
