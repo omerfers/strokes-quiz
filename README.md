@@ -88,6 +88,7 @@ node tools/smoke.mjs
 | Hints | 1st miss reveals album + year, 2nd reveals the title pattern |
 | Correct | +1 score, cover + title shown, track plays for 8s |
 | Reveal | "Reveal answer" skips without scoring |
+| Abandon | "Abandon quiz" twice leaves the run, stops the audio and resets the score |
 
 Everything is local: no backend, no external API, no network calls at runtime.
 
@@ -206,7 +207,7 @@ strokes-quiz/
 | Student's name visible | Footer of the panel: "Developed by Ömer Faruk Ersakay" |
 | Panel bonus: real data from a query | Panel reads the data source frame when attached |
 | Panel bonus: configuration options | 10 options (songs per game, clip length, reveal length, max guesses, extra intro skip, album art, hints, wallpaper, dimming, credit) |
-| Panel bonus: interactivity | Start, guess with Enter, pause/resume, reveal, next, play again, hover states |
+| Panel bonus: interactivity | Start, guess with Enter, pause/resume, abandon, reveal, next, play again, hover states |
 | Data source bonus: mock JSON | `src/songs.json` |
 | Data source bonus: query params | Album filter + row limit in the query editor |
 | Data source bonus: table format | Five fields (id, title, album, year, intro offset), table frame (`preferredVisualisationType: 'table'`) |

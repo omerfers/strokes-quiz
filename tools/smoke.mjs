@@ -69,6 +69,14 @@ await page.screenshot({ path: join(OUT, '01-playing.png') });
 console.log('pause button     :', pauseLabel);
 const clips = await audioRequests();
 console.log('audio requested  :', clips.length ? `${clips.length} clip(s)` : 'none');
+await panel.getByTestId('strokes-abandon').click();
+const abandonArmed = (await panel.getByTestId('strokes-abandon').textContent())?.trim();
+await panel.getByTestId('strokes-abandon').click();
+await page.waitForTimeout(500);
+const backToIdle = (await panel.getByRole('button', { name: /Start the quiz/i }).count()) === 1;
+console.log('abandon          :', abandonArmed === 'Confirm abandon' && backToIdle ? 'confirmed' : 'failed');
+await panel.getByRole('button', { name: /Start the quiz/i }).click();
+await page.waitForTimeout(1200);
 await panel.getByRole('button', { name: /Reveal answer/i }).click();
 await page.waitForTimeout(1200);
 const firstTitle = (await panel.locator('[data-testid="strokes-song-title"]').textContent())?.trim();
@@ -126,6 +134,12 @@ if (kioskFooterVisible) {
 }
 if (!canResume) {
   failures.push('pause/resume button did not work');
+}
+if (abandonArmed !== 'Confirm abandon') {
+  failures.push('abandon did not ask for confirmation');
+}
+if (!backToIdle) {
+  failures.push('abandon did not return to the idle screen');
 }
 if (clips.length === 0) {
   failures.push('no audio clip was requested by the page');

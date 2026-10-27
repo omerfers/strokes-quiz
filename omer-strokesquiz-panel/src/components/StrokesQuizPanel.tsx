@@ -69,6 +69,32 @@ const getStyles = (theme: GrafanaTheme2) => ({
     align-items: baseline;
     gap: 26px;
   `,
+  headerRight: css`
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    margin-left: auto;
+  `,
+  quit: css`
+    appearance: none;
+    border: 0;
+    padding: 4px 0;
+    background: transparent;
+    color: rgba(244, 241, 237, 0.38);
+    font-family: inherit;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 120ms ease;
+    &:hover {
+      color: ${INK};
+    }
+  `,
+  quitArmed: css`
+    color: #ff6a5e;
+  `,
   metaBlock: css`
     display: flex;
     align-items: baseline;
@@ -403,6 +429,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
   const [played, setPlayed] = useState(0);
   const [streak, setStreak] = useState({ current: 0, best: 0 });
   const [audioWarning, setAudioWarning] = useState<string | null>(null);
+  const [quitArmed, setQuitArmed] = useState(false);
   const current = queue[index] ?? null;
   useEffect(() => {
     return () => player.stop();
@@ -440,6 +467,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
       setVerdict('none');
       setWrongGuesses(0);
       setAudioWarning(null);
+      setQuitArmed(false);
       void playClip(song, clipLengthSeconds);
     },
     [clipLengthSeconds, playClip]
@@ -457,6 +485,24 @@ export function StrokesQuizPanel({ options, data }: Props) {
     setStreak({ current: 0, best: 0 });
     beginRound(nextQueue[0]);
   }, [beginRound, playableSongs, player, rounds]);
+  const abandonQuiz = useCallback(() => {
+    if (!quitArmed) {
+      setQuitArmed(true);
+      return;
+    }
+    player.stop();
+    setQuitArmed(false);
+    setQueue([]);
+    setIndex(0);
+    setGuess('');
+    setVerdict('none');
+    setWrongGuesses(0);
+    setScore(0);
+    setPlayed(0);
+    setStreak({ current: 0, best: 0 });
+    setAudioWarning(null);
+    setPhase('idle');
+  }, [player, quitArmed]);
   const submitGuess = useCallback(
     (event: React.SyntheticEvent) => {
       event.preventDefault();
@@ -653,7 +699,15 @@ export function StrokesQuizPanel({ options, data }: Props) {
             <p className={cx(styles.verdictLine, !correct && styles.verdictMiss)}>
               {correct ? 'Correct +1' : 'Answer revealed'}
             </p>
-            <button className={cx(styles.primary, css`margin-top: 18px;`)} onClick={nextSong}>
+            <button
+              className={cx(
+                styles.primary,
+                css`
+                  margin-top: 18px;
+                `
+              )}
+              onClick={nextSong}
+            >
               {index + 1 >= queue.length ? 'See results' : 'Next song'}
             </button>
           </div>
@@ -693,7 +747,19 @@ export function StrokesQuizPanel({ options, data }: Props) {
           <span className={styles.brandDot} />
           The Strokes <span className={styles.brandDim}>/ Song Quiz</span>
         </div>
-        {phase !== 'idle' && phase !== 'finished' && played > 0 && renderScoreboard()}
+        <div className={styles.headerRight}>
+          {phase !== 'idle' && phase !== 'finished' && played > 0 && renderScoreboard()}
+          {(phase === 'playing' || phase === 'reveal') && (
+            <button
+              className={cx(styles.quit, quitArmed && styles.quitArmed)}
+              onClick={abandonQuiz}
+              onBlur={() => setQuitArmed(false)}
+              data-testid="strokes-abandon"
+            >
+              {quitArmed ? 'Confirm abandon' : 'Abandon quiz'}
+            </button>
+          )}
+        </div>
       </header>
 
       <div className={styles.stage}>
