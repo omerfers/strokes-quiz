@@ -206,7 +206,7 @@ strokes-quiz/
 | Student's name visible | Footer of the panel: "Developed by Ömer Faruk Ersakay" |
 | Panel bonus: real data from a query | Panel reads the data source frame when attached |
 | Panel bonus: configuration options | 10 options (songs per game, clip length, reveal length, max guesses, extra intro skip, album art, hints, wallpaper, dimming, credit) |
-| Panel bonus: interactivity | Keyboard submit, hover states, replay, shake feedback |
+| Panel bonus: interactivity | Start, guess with Enter, pause/resume, reveal, next, play again, hover states |
 | Data source bonus: mock JSON | `src/songs.json` |
 | Data source bonus: query params | Album filter + row limit in the query editor |
 | Data source bonus: table format | Five fields (id, title, album, year, intro offset), table visualisation |
