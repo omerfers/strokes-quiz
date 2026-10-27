@@ -407,6 +407,19 @@ export function StrokesQuizPanel({ options, data }: Props) {
   useEffect(() => {
     return () => player.stop();
   }, [player]);
+
+  useEffect(() => {
+    const id = 'strokes-quiz-hide-kiosk-footer';
+    if (!document.getElementById(id)) {
+      const style = document.createElement('style');
+      style.id = id;
+      style.textContent = '[data-testid="public-dashboard-footer"]{display:none !important}';
+      document.head.appendChild(style);
+    }
+    return () => {
+      document.getElementById(id)?.remove();
+    };
+  }, []);
   const offsetFor = useCallback((song: Song) => Math.max(0, (song.startOffsetSeconds ?? 0) + extraSkip), [extraSkip]);
   const playClip = useCallback(
     async (song: Song, seconds: number) => {

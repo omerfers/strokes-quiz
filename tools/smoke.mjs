@@ -94,6 +94,16 @@ const score = (await panel.locator('[data-testid="strokes-score"]').textContent(
 console.log('correct guess    :', solved);
 console.log('score pill       :', score);
 console.log('console errors   :', consoleErrors.length ? consoleErrors : 'none');
+const kioskPage = await context.newPage();
+await kioskPage.goto(`${BASE}/d/strokes-quiz/?kiosk`, { waitUntil: 'domcontentloaded' });
+await kioskPage.locator('[data-testid="strokes-quiz-panel"]').waitFor({ timeout: 30000 });
+await kioskPage.waitForTimeout(1000);
+const kioskFooterVisible = await kioskPage
+  .locator('[data-testid="public-dashboard-footer"]')
+  .isVisible()
+  .catch(() => false);
+console.log('plain kiosk bar  :', kioskFooterVisible ? 'visible' : 'hidden');
+await kioskPage.close();
 await browser.close();
 const failures = [];
 if (!credit || !/Ömer Faruk Ersakay/.test(credit)) {
@@ -110,6 +120,9 @@ if (!attributionVisible || !/Powered by/i.test(attributionText) || !logoLoaded) 
 }
 if (stickyFooter > 0) {
   failures.push('the sticky Grafana footer is still visible');
+}
+if (kioskFooterVisible) {
+  failures.push('the sticky Grafana footer shows up without hideLogo');
 }
 if (!canResume) {
   failures.push('pause/resume button did not work');
