@@ -46,6 +46,33 @@
       "type": "omer-strokesquiz-panel"
     },
     {
+      "id": 3,
+      "type": "text",
+      "title": "",
+      "transparent": true,
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "options": {
+        "mode": "html",
+        "content": "<div style=\"display:flex;align-items:center;justify-content:flex-end;gap:8px;height:100%;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#a09b96;font-family:Inter,Helvetica,Arial,sans-serif;\"><span>Powered by</span><img src=\"/public/img/grafana_text_logo_light.svg\" alt=\"Grafana\" style=\"height:14px;display:block;opacity:0.9;\" /></div>",
+        "code": {
+          "language": "html",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        }
+      },
+      "targets": []
+    },
+    {
       "datasource": {
         "type": "omer-strokesquiz-datasource",
         "uid": "strokes-catalog"
@@ -127,7 +154,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 16
+        "y": 17
       },
       "id": 2,
       "options": {

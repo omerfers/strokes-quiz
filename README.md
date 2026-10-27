@@ -26,7 +26,9 @@ Open <http://localhost:3000> → log in with `admin` / `admin` → dashboard
 **The Strokes — Song Quiz**. For the distraction-free version used in the
 screenshots, open
 <http://localhost:3000/d/strokes-quiz/?kiosk&hideLogo=1> — `kiosk` hides the
-Grafana navigation and `hideLogo=1` removes the “Powered by Grafana” footer.
+Grafana navigation and `hideLogo=1` removes the sticky Grafana footer. The
+dashboard keeps its own slim “Powered by Grafana” line directly above the song
+catalog instead.
 
 `tools/dev.sh` builds both plugins, copies `dist/` into `plugins/<plugin-id>/`
 and starts Grafana with `grafana/custom.ini`. Plugins are unsigned, so

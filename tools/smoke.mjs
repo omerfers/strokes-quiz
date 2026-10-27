@@ -37,6 +37,18 @@ const credit = (
 console.log('credit line      :', credit);
 const catalogStatus = (await panel.getByTestId('strokes-catalog-status').textContent())?.replace(/\s+/g, ' ').trim();
 console.log('catalog status   :', catalogStatus);
+const attribution = page
+  .locator('[data-testid^="text-panel-"]')
+  .filter({ hasText: /Powered by/i })
+  .first();
+const attributionVisible = await attribution.isVisible();
+const attributionText = (await attribution.innerText()).replace(/\s+/g, ' ').trim();
+const logoLoaded = await attribution
+  .locator('img')
+  .evaluate((img) => img instanceof HTMLImageElement && img.complete && img.naturalWidth > 0)
+  .catch(() => false);
+const stickyFooter = await page.locator('[data-testid="public-dashboard-footer"]').count();
+console.log('attribution      :', attributionText, '| logo:', logoLoaded, '| sticky footer:', stickyFooter);
 const audioRequests = () =>
   page.evaluate(() =>
     performance
@@ -92,6 +104,12 @@ if (!firstTitle || !artVisible) {
 }
 if (!catalogStatus || !catalogStatus.includes(`${catalog.length}/${catalog.length}`)) {
   failures.push(`footer does not show full audio coverage: ${catalogStatus}`);
+}
+if (!attributionVisible || !/Powered by/i.test(attributionText) || !logoLoaded) {
+  failures.push('the Powered by Grafana line above the catalog is missing');
+}
+if (stickyFooter > 0) {
+  failures.push('the sticky Grafana footer is still visible');
 }
 if (!canResume) {
   failures.push('pause/resume button did not work');
