@@ -25,7 +25,7 @@ const login = await context.request.post(`${BASE}/login`, {
 if (!login.ok()) {
   throw new Error(`login failed: ${login.status()} ${await login.text()}`);
 }
-await page.goto(`${BASE}/d/strokes-quiz/?kiosk`, { waitUntil: 'domcontentloaded' });
+await page.goto(`${BASE}/d/strokes-quiz/?kiosk&hideLogo=1`, { waitUntil: 'domcontentloaded' });
 const panel = page.locator('[data-testid="strokes-quiz-panel"]');
 await panel.waitFor({ timeout: 30000 });
 const credit = (

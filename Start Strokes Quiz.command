@@ -7,7 +7,7 @@
 
 cd "$(dirname "$0")" || exit 1
 
-URL="http://localhost:3000/d/strokes-quiz/?kiosk"
+URL="http://localhost:3000/d/strokes-quiz/?kiosk&hideLogo=1"
 
 if curl -s --max-time 2 http://localhost:3000/api/health >/dev/null 2>&1; then
   echo "Grafana is already running — opening the quiz."

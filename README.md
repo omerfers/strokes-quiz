@@ -2,7 +2,7 @@
 
 A music guessing game for Grafana: a random The Strokes clip plays, you type the
 song title, and a correct answer reveals the album art and plays the track for
-another 15 seconds. Score and streak are tracked per run, over the band's
+another 8 seconds. Score and streak are tracked per run, over the band's
 wallpaper.
 
 Built for the MIS 251 final project, where the deliverable is **a Grafana plugin
@@ -23,7 +23,10 @@ that builds, loads in Grafana and shows the student's name**.
 ```
 
 Open <http://localhost:3000> → log in with `admin` / `admin` → dashboard
-**The Strokes — Song Quiz**.
+**The Strokes — Song Quiz**. For the distraction-free version used in the
+screenshots, open
+<http://localhost:3000/d/strokes-quiz/?kiosk&hideLogo=1> — `kiosk` hides the
+Grafana navigation and `hideLogo=1` removes the “Powered by Grafana” footer.
 
 `tools/dev.sh` builds both plugins, copies `dist/` into `plugins/<plugin-id>/`
 and starts Grafana with `grafana/custom.ini`. Plugins are unsigned, so
