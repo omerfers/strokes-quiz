@@ -447,7 +447,13 @@ export function StrokesQuizPanel({ options, data }: Props) {
     if (!document.getElementById(id)) {
       const style = document.createElement('style');
       style.id = id;
-      style.textContent = '[data-testid="public-dashboard-footer"]{display:none !important}';
+      const kiosk = new URLSearchParams(window.location.search).has('kiosk');
+      // In kiosk the dashboard is the whole page: a page background that matches
+      // the panel stops any leftover strip below it reading as a separate bar.
+      style.textContent = [
+        '[data-testid="public-dashboard-footer"]{display:none !important}',
+        kiosk ? 'body{background:#0b0909 !important}' : '',
+      ].join('');
       document.head.appendChild(style);
     }
     return () => {
