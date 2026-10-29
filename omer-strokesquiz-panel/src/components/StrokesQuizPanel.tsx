@@ -342,6 +342,13 @@ const getStyles = (theme: GrafanaTheme2) => ({
   verdictMiss: css`
     color: ${MUTED};
   `,
+  keyHint: css`
+    margin: 9px 0 0;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: ${FAINT};
+  `,
   resultScore: css`
     display: flex;
     align-items: baseline;
@@ -546,6 +553,27 @@ export function StrokesQuizPanel({ options, data }: Props) {
     setIndex(nextIndex);
     beginRound(queue[nextIndex]);
   }, [beginRound, index, player, queue]);
+  // The reveal screen is a dead end unless you reach for the mouse: Enter keeps
+  // the quiz playable from the keyboard alone.
+  useEffect(() => {
+    if (phase !== 'reveal') {
+      return;
+    }
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== 'Enter' || event.repeat || event.metaKey || event.ctrlKey || event.altKey) {
+        return;
+      }
+      const target = event.target as HTMLElement | null;
+      // Let the focused button fire its own click instead of firing twice.
+      if (target && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(target.tagName))) {
+        return;
+      }
+      event.preventDefault();
+      nextSong();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [nextSong, phase]);
   const toggleAudio = useCallback(() => {
     if (audioState === 'playing') {
       player.pause();
@@ -710,6 +738,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
             >
               {index + 1 >= queue.length ? 'See results' : 'Next song'}
             </button>
+            <p className={styles.keyHint}>Press Enter to continue</p>
           </div>
         </div>
       </div>
