@@ -444,10 +444,10 @@ export function StrokesQuizPanel({ options, data }: Props) {
 
   useEffect(() => {
     const id = 'strokes-quiz-hide-kiosk-footer';
+    const kiosk = new URLSearchParams(window.location.search).has('kiosk');
     if (!document.getElementById(id)) {
       const style = document.createElement('style');
       style.id = id;
-      const kiosk = new URLSearchParams(window.location.search).has('kiosk');
       // In kiosk the dashboard is the whole page: a page background that matches
       // the panel stops any leftover strip below it reading as a separate bar.
       style.textContent = [
@@ -456,8 +456,21 @@ export function StrokesQuizPanel({ options, data }: Props) {
       ].join('');
       document.head.appendChild(style);
     }
+    // Esc is Grafana's "leave kiosk" shortcut, which drops the player into the
+    // navigation menu mid-quiz. Swallow it so the quiz stays put.
+    const blockEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+    };
+    if (kiosk) {
+      window.addEventListener('keydown', blockEscape, true);
+    }
     return () => {
       document.getElementById(id)?.remove();
+      window.removeEventListener('keydown', blockEscape, true);
     };
   }, []);
   const offsetFor = useCallback((song: Song) => Math.max(0, (song.startOffsetSeconds ?? 0) + extraSkip), [extraSkip]);
