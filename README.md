@@ -2,7 +2,7 @@
 
 A music guessing game for Grafana: a random The Strokes clip plays, you type the
 song title, and a correct answer reveals the album art and plays the track for
-another 8 seconds. Score and streak are tracked per run, over the band's
+another 8 seconds. Score and streak are tracked per run, over the bands's
 wallpaper.
 
 Built for the MIS 233 final project, where the deliverable is **a Grafana plugin
