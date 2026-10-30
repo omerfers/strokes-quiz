@@ -5,7 +5,7 @@ song title, and a correct answer reveals the album art and plays the track for
 another 8 seconds. Score and streak are tracked per run, over the band's
 wallpaper.
 
-Built for the MIS 251 final project, where the deliverable is **a Grafana plugin
+Built for the MIS 233 final project, where the deliverable is **a Grafana plugin
 that builds, loads in Grafana and shows the student's name**.
 
 - Panel plugin: **Strokes Song Quiz** (`omer-strokesquiz-panel`) — the game UI
