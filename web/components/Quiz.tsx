@@ -41,8 +41,17 @@ export function Quiz() {
 
   useEffect(() => () => player.stop(), [player]);
 
+  const lastPlay = useRef<{ key: string; at: number }>({ key: "", at: 0 });
+
   const playClip = useCallback(
     async (song: Song, seconds: number) => {
+      // guard against a duplicate request for the same round (double clicks,
+      // re-renders) starting the preview twice
+      const key = `${song.id}:${seconds}`;
+      const now = Date.now();
+      if (lastPlay.current.key === key && now - lastPlay.current.at < 700) return;
+      lastPlay.current = { key, at: now };
+
       const preview = await resolvePreview(song);
       if (!preview) {
         setWarning(`No iTunes preview found for “${song.title}”.`);

@@ -6,6 +6,7 @@ export class ClipPlayer {
   private endAt = 0;
   private remainingMs = 0;
   private paused = false;
+  private token = 0;
   private listener?: (state: ClipState) => void;
 
   constructor(listener?: (state: ClipState) => void) {
@@ -17,6 +18,7 @@ export class ClipPlayer {
   }
 
   stop() {
+    this.token += 1;
     this.clearTimer();
     this.remainingMs = 0;
     this.paused = false;
@@ -52,15 +54,22 @@ export class ClipPlayer {
 
   async play(url: string, offsetSeconds: number, seconds: number) {
     this.stop();
+    const token = ++this.token;
     const el = new Audio(url);
     el.preload = "auto";
     el.crossOrigin = "anonymous";
     this.el = el;
     try {
       await this.seek(el, offsetSeconds);
+      // a newer round may have started while the clip was loading
+      if (token !== this.token) return false;
       await el.play();
     } catch {
-      this.stop();
+      if (token === this.token) this.stop();
+      return false;
+    }
+    if (token !== this.token) {
+      el.pause();
       return false;
     }
     this.startTimer(seconds * 1000);
@@ -77,7 +86,12 @@ export class ClipPlayer {
         try {
           el.currentTime = Math.max(0, seconds);
         } catch {}
-        resolve();
+        if (el.seeking) {
+          el.addEventListener("seeked", () => resolve(), { once: true });
+          window.setTimeout(resolve, 400);
+        } else {
+          resolve();
+        }
       };
       if (el.readyState >= 1) {
         done();
