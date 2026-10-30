@@ -3,6 +3,8 @@
 The Grafana panel, rebuilt as a plain web app so anyone can play it without
 installing Grafana or downloading anything.
 
+Live: **https://strokes-quiz-seven.vercel.app**
+
 ```bash
 npm install
 npm run dev     # http://localhost:3000

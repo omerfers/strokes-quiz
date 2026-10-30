@@ -15,7 +15,7 @@ that builds, loads in Grafana and shows the student's name**.
 
 ## Play it on the web
 
-The quiz also runs as a normal website, no Grafana needed: **https://strokes-quiz.vercel.app**
+The quiz also runs as a normal website, no Grafana needed: **https://strokes-quiz-seven.vercel.app**
 
 The `web/` folder is a standalone Next.js app with the same rules, design and
 iTunes previews.
