@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { GrafanaTheme2, PanelProps } from '@grafana/data';
 import { css, cx } from '@emotion/css';
 import { useStyles2 } from '@grafana/ui';
-import backgroundImage from '../img/background.jpg';
 import { ClipPlayer, ClipState } from '../audio/player';
 import { resolvePreview } from '../audio/preview';
 import { resolveSongs } from '../songs';
@@ -416,10 +415,23 @@ export function StrokesQuizPanel({ options, data }: Props) {
   const showAlbumArt = options.showAlbumArt ?? true;
   const showBackground = options.showBackground ?? true;
   const backgroundDim = Math.min(0.95, Math.max(0, (options.backgroundDim ?? 72) / 100));
-  const backgroundScrim = Math.min(0.97, backgroundDim + 0.16);
+  // The stage is painted, not photographed: a turquoise studio panel with the
+  // warm spill of a stage light, so nothing third-party ships with the plugin.
+  const scrim = (alpha: number) => `rgba(5, 9, 11, ${alpha})`;
   const backgroundStyle = showBackground
     ? {
-        backgroundImage: `linear-gradient(90deg, rgba(6, 4, 4, ${backgroundScrim}) 0%, rgba(6, 4, 4, ${backgroundScrim}) 34%, rgba(6, 4, 4, ${backgroundDim}) 62%, rgba(6, 4, 4, ${backgroundDim}) 100%), url(${backgroundImage})`,
+        backgroundColor: '#05090b',
+        backgroundImage: [
+          `linear-gradient(90deg, ${scrim(0.92)} 0%, ${scrim(0.86)} 28%, ${scrim(
+            backgroundDim * 0.6
+          )} 50%, ${scrim(backgroundDim * 0.52)} 70%, ${scrim(backgroundDim * 0.9)} 100%)`,
+          'linear-gradient(90deg, transparent 42%, rgba(38, 172, 184, 0.22) 52%, rgba(58, 206, 216, 0.34) 68%, rgba(38, 172, 184, 0.2) 82%, transparent 92%)',
+          'radial-gradient(52% 82% at 66% 42%, rgba(48, 190, 200, 0.5) 0%, rgba(26, 116, 132, 0.3) 48%, transparent 80%)',
+          'radial-gradient(40% 34% at 58% 104%, rgba(236, 178, 68, 0.42) 0%, transparent 74%)',
+          'repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.015) 0 1px, transparent 1px 4px)',
+          'repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.05) 0 1px, transparent 1px 3px)',
+          'linear-gradient(180deg, #05090b 0%, #081114 58%, #05090b 100%)',
+        ].join(', '),
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',

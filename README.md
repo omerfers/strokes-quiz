@@ -23,8 +23,7 @@ that builds, loads in Grafana and shows the student's name**.
 ```
 
 Open <http://localhost:3000> → log in with `admin` / `admin` → dashboard
-**The Strokes — Song Quiz**. For the distraction-free version used in the
-screenshots, open
+**The Strokes — Song Quiz**. For the distraction-free version, open
 <http://localhost:3000/d/strokes-quiz/?kiosk&hideLogo=1> — `kiosk` hides the
 Grafana navigation and `hideLogo=1` stops the sticky Grafana footer before the
 page renders. The quiz panel also hides that footer itself, so the only
@@ -61,13 +60,9 @@ the session. The footer reads `79 tracks · previews via iTunes`.
 
 ## Screenshots
 
-| Idle | Listening | Correct guess |
-| --- | --- | --- |
-| ![Idle](docs/screenshots/00-idle.png) | ![Listening](docs/screenshots/01-playing.png) | ![Reveal](docs/screenshots/03-correct.png) |
-
-| Revealing the answer |
-| --- |
-| ![Reveal](docs/screenshots/02-reveal.png) |
+`node tools/smoke.mjs` writes the end-to-end screenshots to
+`docs/screenshots/`; that folder is ignored by git so the repo carries no
+third-party imagery, and the app paints its own backdrop in CSS.
 
 ## Verify it works
 
@@ -76,7 +71,7 @@ the session. The footer reads `79 tracks · previews via iTunes`.
 (cd omer-strokesquiz-panel && npm run test:ci)
 
 # end-to-end: loads the dashboard headlessly, plays a round, checks the score,
-# and regenerates the screenshots above
+# and writes screenshots to docs/screenshots/
 node tools/smoke.mjs
 ```
 
