@@ -61,8 +61,8 @@ the session. The footer reads `79 tracks · previews via iTunes`.
 ## Screenshots
 
 `node tools/smoke.mjs` writes the end-to-end screenshots to
-`docs/screenshots/`; that folder is ignored by git so the repo carries no
-third-party imagery, and the app paints its own backdrop in CSS.
+`docs/screenshots/`; that folder is ignored by git. The panel's backdrop is
+`src/img/background.jpg` (replace it with any 16:9 image and rebuild).
 
 ## Verify it works
 
