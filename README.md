@@ -9,7 +9,9 @@ Built for the MIS 233 final project, where the deliverable is **a Grafana plugin
 that builds, loads in Grafana and shows the student's name**.
 
 - Panel plugin: **Strokes Song Quiz** (`omer-strokesquiz-panel`) — the game UI
-- Data source plugin: **Strokes Song Catalog** (`omer-strokesquiz-datasource`) — serves the song catalog
+- Data source plugin: **Strokes Song Catalog** (`omer-strokesquiz-datasource`) — serves the
+  catalog metadata (titles, albums, years, intro offsets); the audio previews are
+  resolved from iTunes by the panel, not by the data source
 
 ## Quick start
 
@@ -163,6 +165,8 @@ Song ids and track ids live in
 
 The panel uses the data source when one is attached, and falls back to the
 catalog bundled in `catalog.json` otherwise — so it never shows an empty screen.
+The data source frame carries the metadata only; the panel matches each row to
+`catalog.json` by `id` to pick up the `itunesTrackId` it needs for playback.
 
 ## Project layout
 
