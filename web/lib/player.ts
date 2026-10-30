@@ -80,7 +80,14 @@ export class ClipPlayer {
 
   private seek(el: HTMLAudioElement, seconds: number) {
     return new Promise<void>((resolve) => {
+      // The timeout must only ever fire once: a late second call would seek the
+      // clip back to its start while it is already playing (heard as a repeat).
+      let settled = false;
+      const timer = window.setTimeout(() => done(), 2500);
       const done = () => {
+        if (settled) return;
+        settled = true;
+        window.clearTimeout(timer);
         el.removeEventListener("loadedmetadata", done);
         el.removeEventListener("error", done);
         try {
@@ -99,7 +106,6 @@ export class ClipPlayer {
       }
       el.addEventListener("loadedmetadata", done, { once: true });
       el.addEventListener("error", done, { once: true });
-      window.setTimeout(done, 2500);
     });
   }
 
