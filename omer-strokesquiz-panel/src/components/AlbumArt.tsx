@@ -1,7 +1,6 @@
 import React from 'react';
 import { css } from '@emotion/css';
 import { Song } from '../types';
-const covers = require.context('../img/covers', false, /\.(jpg|jpeg|png|webp)$/);
 const styles = {
   cover: css`
     display: block;
@@ -40,14 +39,6 @@ const styles = {
     color: rgba(239, 233, 228, 0.58);
   `,
 };
-function coverUrl(albumKey: string): string | undefined {
-  const file = `./${albumKey}.jpg`;
-  if (!covers.keys().includes(file)) {
-    return undefined;
-  }
-  const mod = covers(file);
-  return typeof mod === 'string' ? mod : mod.default;
-}
 function initialsFor(album: string): string {
   return album
     .split(/\s+/)
@@ -57,8 +48,8 @@ function initialsFor(album: string): string {
     .slice(0, 2)
     .toUpperCase();
 }
-export function AlbumArt({ song }: { song: Song }) {
-  const url = coverUrl(song.albumKey);
+export function AlbumArt({ song, artworkUrl }: { song: Song; artworkUrl?: string }) {
+  const url = artworkUrl;
   if (!url) {
     return (
       <div className={styles.fallback} data-testid="strokes-album-art">

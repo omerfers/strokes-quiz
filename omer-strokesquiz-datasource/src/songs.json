@@ -3,6 +3,7 @@
   "songs": [
     {
       "id": "is-this-it",
+      "itunesTrackId": 266376961,
       "title": "Is This It",
       "album": "Is This It",
       "albumKey": "is-this-it",
@@ -12,6 +13,7 @@
     },
     {
       "id": "the-modern-age",
+      "itunesTrackId": 266376973,
       "title": "The Modern Age",
       "album": "Is This It",
       "albumKey": "is-this-it",
@@ -21,6 +23,7 @@
     },
     {
       "id": "soma",
+      "itunesTrackId": 266376981,
       "title": "Soma",
       "album": "Is This It",
       "albumKey": "is-this-it",
@@ -30,6 +33,7 @@
     },
     {
       "id": "barely-legal",
+      "itunesTrackId": 266376983,
       "title": "Barely Legal",
       "album": "Is This It",
       "albumKey": "is-this-it",
@@ -39,6 +43,7 @@
     },
     {
       "id": "someday",
+      "itunesTrackId": 266376993,
       "title": "Someday",
       "album": "Is This It",
       "albumKey": "is-this-it",
@@ -48,6 +53,7 @@
     },
     {
       "id": "alone-together",
+      "itunesTrackId": 266377001,
       "title": "Alone, Together",
       "album": "Is This It",
       "albumKey": "is-this-it",
@@ -57,6 +63,7 @@
     },
     {
       "id": "last-nite",
+      "itunesTrackId": 266377010,
       "title": "Last Nite",
       "album": "Is This It",
       "albumKey": "is-this-it",
@@ -66,6 +73,7 @@
     },
     {
       "id": "hard-to-explain",
+      "itunesTrackId": 266377055,
       "title": "Hard to Explain",
       "album": "Is This It",
       "albumKey": "is-this-it",
@@ -75,6 +83,7 @@
     },
     {
       "id": "trying-your-luck",
+      "itunesTrackId": 266377070,
       "title": "Trying Your Luck",
       "album": "Is This It",
       "albumKey": "is-this-it",
@@ -84,6 +93,7 @@
     },
     {
       "id": "take-it-or-leave-it",
+      "itunesTrackId": 266377177,
       "title": "Take It or Leave It",
       "album": "Is This It",
       "albumKey": "is-this-it",
@@ -93,6 +103,7 @@
     },
     {
       "id": "when-it-started",
+      "itunesTrackId": 266377068,
       "title": "When It Started",
       "album": "Is This It",
       "albumKey": "is-this-it",
@@ -102,6 +113,7 @@
     },
     {
       "id": "what-ever-happened",
+      "itunesTrackId": 302987568,
       "title": "What Ever Happened?",
       "album": "Room on Fire",
       "albumKey": "room-on-fire",
@@ -111,6 +123,7 @@
     },
     {
       "id": "reptilia",
+      "itunesTrackId": 302987569,
       "title": "Reptilia",
       "album": "Room on Fire",
       "albumKey": "room-on-fire",
@@ -120,6 +133,7 @@
     },
     {
       "id": "automatic-stop",
+      "itunesTrackId": 302987570,
       "title": "Automatic Stop",
       "album": "Room on Fire",
       "albumKey": "room-on-fire",
@@ -129,6 +143,7 @@
     },
     {
       "id": "12-51",
+      "itunesTrackId": 302987572,
       "title": "12:51",
       "album": "Room on Fire",
       "albumKey": "room-on-fire",
@@ -138,6 +153,7 @@
     },
     {
       "id": "you-talk-way-too-much",
+      "itunesTrackId": 302987573,
       "title": "You Talk Way Too Much",
       "album": "Room on Fire",
       "albumKey": "room-on-fire",
@@ -147,6 +163,7 @@
     },
     {
       "id": "between-love-and-hate",
+      "itunesTrackId": 302987574,
       "title": "Between Love & Hate",
       "album": "Room on Fire",
       "albumKey": "room-on-fire",
@@ -156,6 +173,7 @@
     },
     {
       "id": "meet-me-in-the-bathroom",
+      "itunesTrackId": 302987576,
       "title": "Meet Me in the Bathroom",
       "album": "Room on Fire",
       "albumKey": "room-on-fire",
@@ -165,6 +183,7 @@
     },
     {
       "id": "under-control",
+      "itunesTrackId": 302987577,
       "title": "Under Control",
       "album": "Room on Fire",
       "albumKey": "room-on-fire",
@@ -174,6 +193,7 @@
     },
     {
       "id": "the-way-it-is",
+      "itunesTrackId": 302987578,
       "title": "The Way It Is",
       "album": "Room on Fire",
       "albumKey": "room-on-fire",
@@ -183,6 +203,7 @@
     },
     {
       "id": "the-end-has-no-end",
+      "itunesTrackId": 302987580,
       "title": "The End Has No End",
       "album": "Room on Fire",
       "albumKey": "room-on-fire",
@@ -192,6 +213,7 @@
     },
     {
       "id": "i-cant-win",
+      "itunesTrackId": 302987582,
       "title": "I Can't Win",
       "album": "Room on Fire",
       "albumKey": "room-on-fire",
@@ -201,6 +223,7 @@
     },
     {
       "id": "you-only-live-once",
+      "itunesTrackId": 299740483,
       "title": "You Only Live Once",
       "album": "First Impressions of Earth",
       "albumKey": "first-impressions-of-earth",
@@ -210,6 +233,7 @@
     },
     {
       "id": "juicebox",
+      "itunesTrackId": 299740528,
       "title": "Juicebox",
       "album": "First Impressions of Earth",
       "albumKey": "first-impressions-of-earth",
@@ -219,6 +243,7 @@
     },
     {
       "id": "heart-in-a-cage",
+      "itunesTrackId": 299740589,
       "title": "Heart in a Cage",
       "album": "First Impressions of Earth",
       "albumKey": "first-impressions-of-earth",
@@ -228,6 +253,7 @@
     },
     {
       "id": "razorblade",
+      "itunesTrackId": 299740613,
       "title": "Razorblade",
       "album": "First Impressions of Earth",
       "albumKey": "first-impressions-of-earth",
@@ -237,6 +263,7 @@
     },
     {
       "id": "on-the-other-side",
+      "itunesTrackId": 299740632,
       "title": "On the Other Side",
       "album": "First Impressions of Earth",
       "albumKey": "first-impressions-of-earth",
@@ -246,6 +273,7 @@
     },
     {
       "id": "vision-of-division",
+      "itunesTrackId": 299740653,
       "title": "Vision of Division",
       "album": "First Impressions of Earth",
       "albumKey": "first-impressions-of-earth",
@@ -255,6 +283,7 @@
     },
     {
       "id": "ask-me-anything",
+      "itunesTrackId": 299740716,
       "title": "Ask Me Anything",
       "album": "First Impressions of Earth",
       "albumKey": "first-impressions-of-earth",
@@ -264,6 +293,7 @@
     },
     {
       "id": "electricityscape",
+      "itunesTrackId": 299740757,
       "title": "Electricityscape",
       "album": "First Impressions of Earth",
       "albumKey": "first-impressions-of-earth",
@@ -273,6 +303,7 @@
     },
     {
       "id": "killing-lies",
+      "itunesTrackId": 299740798,
       "title": "Killing Lies",
       "album": "First Impressions of Earth",
       "albumKey": "first-impressions-of-earth",
@@ -282,6 +313,7 @@
     },
     {
       "id": "fear-of-sleep",
+      "itunesTrackId": 299740914,
       "title": "Fear of Sleep",
       "album": "First Impressions of Earth",
       "albumKey": "first-impressions-of-earth",
@@ -291,6 +323,7 @@
     },
     {
       "id": "15-minutes",
+      "itunesTrackId": 299740984,
       "title": "15 Minutes",
       "album": "First Impressions of Earth",
       "albumKey": "first-impressions-of-earth",
@@ -300,6 +333,7 @@
     },
     {
       "id": "ize-of-the-world",
+      "itunesTrackId": 299741025,
       "title": "Ize of the World",
       "album": "First Impressions of Earth",
       "albumKey": "first-impressions-of-earth",
@@ -309,6 +343,7 @@
     },
     {
       "id": "evening-sun",
+      "itunesTrackId": 299741153,
       "title": "Evening Sun",
       "album": "First Impressions of Earth",
       "albumKey": "first-impressions-of-earth",
@@ -318,6 +353,7 @@
     },
     {
       "id": "red-light",
+      "itunesTrackId": 299741184,
       "title": "Red Light",
       "album": "First Impressions of Earth",
       "albumKey": "first-impressions-of-earth",
@@ -327,6 +363,7 @@
     },
     {
       "id": "machu-picchu",
+      "itunesTrackId": 581797964,
       "title": "Machu Picchu",
       "album": "Angles",
       "albumKey": "angles",
@@ -336,6 +373,7 @@
     },
     {
       "id": "under-cover-of-darkness",
+      "itunesTrackId": 581797965,
       "title": "Under Cover of Darkness",
       "album": "Angles",
       "albumKey": "angles",
@@ -345,6 +383,7 @@
     },
     {
       "id": "two-kinds-of-happiness",
+      "itunesTrackId": 581797966,
       "title": "Two Kinds of Happiness",
       "album": "Angles",
       "albumKey": "angles",
@@ -354,6 +393,7 @@
     },
     {
       "id": "youre-so-right",
+      "itunesTrackId": 581797967,
       "title": "You're So Right",
       "album": "Angles",
       "albumKey": "angles",
@@ -363,6 +403,7 @@
     },
     {
       "id": "taken-for-a-fool",
+      "itunesTrackId": 581797968,
       "title": "Taken for a Fool",
       "album": "Angles",
       "albumKey": "angles",
@@ -372,6 +413,7 @@
     },
     {
       "id": "games",
+      "itunesTrackId": 581797969,
       "title": "Games",
       "album": "Angles",
       "albumKey": "angles",
@@ -381,6 +423,7 @@
     },
     {
       "id": "call-me-back",
+      "itunesTrackId": 581797970,
       "title": "Call Me Back",
       "album": "Angles",
       "albumKey": "angles",
@@ -390,6 +433,7 @@
     },
     {
       "id": "gratisfaction",
+      "itunesTrackId": 581797971,
       "title": "Gratisfaction",
       "album": "Angles",
       "albumKey": "angles",
@@ -399,6 +443,7 @@
     },
     {
       "id": "metabolism",
+      "itunesTrackId": 581797972,
       "title": "Metabolism",
       "album": "Angles",
       "albumKey": "angles",
@@ -408,6 +453,7 @@
     },
     {
       "id": "life-is-simple-in-the-moonlight",
+      "itunesTrackId": 581797973,
       "title": "Life Is Simple in the Moonlight",
       "album": "Angles",
       "albumKey": "angles",
@@ -417,6 +463,7 @@
     },
     {
       "id": "tap-out",
+      "itunesTrackId": 601140188,
       "title": "Tap Out",
       "album": "Comedown Machine",
       "albumKey": "comedown-machine",
@@ -426,6 +473,7 @@
     },
     {
       "id": "all-the-time",
+      "itunesTrackId": 601140629,
       "title": "All the Time",
       "album": "Comedown Machine",
       "albumKey": "comedown-machine",
@@ -435,6 +483,7 @@
     },
     {
       "id": "one-way-trigger",
+      "itunesTrackId": 601140630,
       "title": "One Way Trigger",
       "album": "Comedown Machine",
       "albumKey": "comedown-machine",
@@ -444,6 +493,7 @@
     },
     {
       "id": "welcome-to-japan",
+      "itunesTrackId": 601140631,
       "title": "Welcome to Japan",
       "album": "Comedown Machine",
       "albumKey": "comedown-machine",
@@ -453,6 +503,7 @@
     },
     {
       "id": "80s-comedown-machine",
+      "itunesTrackId": 601140632,
       "title": "80's Comedown Machine",
       "album": "Comedown Machine",
       "albumKey": "comedown-machine",
@@ -462,6 +513,7 @@
     },
     {
       "id": "50-50",
+      "itunesTrackId": 601140633,
       "title": "50/50",
       "album": "Comedown Machine",
       "albumKey": "comedown-machine",
@@ -471,6 +523,7 @@
     },
     {
       "id": "slow-animals",
+      "itunesTrackId": 601140642,
       "title": "Slow Animals",
       "album": "Comedown Machine",
       "albumKey": "comedown-machine",
@@ -480,6 +533,7 @@
     },
     {
       "id": "partners-in-crime",
+      "itunesTrackId": 601140643,
       "title": "Partners in Crime",
       "album": "Comedown Machine",
       "albumKey": "comedown-machine",
@@ -489,6 +543,7 @@
     },
     {
       "id": "chances",
+      "itunesTrackId": 601140644,
       "title": "Chances",
       "album": "Comedown Machine",
       "albumKey": "comedown-machine",
@@ -498,6 +553,7 @@
     },
     {
       "id": "happy-ending",
+      "itunesTrackId": 601140645,
       "title": "Happy Ending",
       "album": "Comedown Machine",
       "albumKey": "comedown-machine",
@@ -507,6 +563,7 @@
     },
     {
       "id": "call-it-fate-call-it-karma",
+      "itunesTrackId": 601140646,
       "title": "Call It Fate, Call It Karma",
       "album": "Comedown Machine",
       "albumKey": "comedown-machine",
@@ -516,6 +573,7 @@
     },
     {
       "id": "drag-queen",
+      "itunesTrackId": 1478663900,
       "title": "Drag Queen",
       "album": "Future Present Past",
       "albumKey": "future-present-past",
@@ -525,6 +583,7 @@
     },
     {
       "id": "oblivius",
+      "itunesTrackId": 1478664358,
       "title": "Oblivius",
       "album": "Future Present Past",
       "albumKey": "future-present-past",
@@ -534,6 +593,7 @@
     },
     {
       "id": "threat-of-joy",
+      "itunesTrackId": 1478664357,
       "title": "Threat of Joy",
       "album": "Future Present Past",
       "albumKey": "future-present-past",
@@ -543,6 +603,7 @@
     },
     {
       "id": "the-adults-are-talking",
+      "itunesTrackId": 1498121711,
       "title": "The Adults Are Talking",
       "album": "The New Abnormal",
       "albumKey": "the-new-abnormal",
@@ -552,6 +613,7 @@
     },
     {
       "id": "selfless",
+      "itunesTrackId": 1498121718,
       "title": "Selfless",
       "album": "The New Abnormal",
       "albumKey": "the-new-abnormal",
@@ -561,6 +623,7 @@
     },
     {
       "id": "brooklyn-bridge-to-chorus",
+      "itunesTrackId": 1498121722,
       "title": "Brooklyn Bridge to Chorus",
       "album": "The New Abnormal",
       "albumKey": "the-new-abnormal",
@@ -570,6 +633,7 @@
     },
     {
       "id": "bad-decisions",
+      "itunesTrackId": 1498121725,
       "title": "Bad Decisions",
       "album": "The New Abnormal",
       "albumKey": "the-new-abnormal",
@@ -579,6 +643,7 @@
     },
     {
       "id": "eternal-summer",
+      "itunesTrackId": 1498121734,
       "title": "Eternal Summer",
       "album": "The New Abnormal",
       "albumKey": "the-new-abnormal",
@@ -588,6 +653,7 @@
     },
     {
       "id": "at-the-door",
+      "itunesTrackId": 1498121946,
       "title": "At the Door",
       "album": "The New Abnormal",
       "albumKey": "the-new-abnormal",
@@ -597,6 +663,7 @@
     },
     {
       "id": "why-are-sundays-so-depressing",
+      "itunesTrackId": 1498121950,
       "title": "Why Are Sundays So Depressing",
       "album": "The New Abnormal",
       "albumKey": "the-new-abnormal",
@@ -606,6 +673,7 @@
     },
     {
       "id": "not-the-same-anymore",
+      "itunesTrackId": 1498121953,
       "title": "Not the Same Anymore",
       "album": "The New Abnormal",
       "albumKey": "the-new-abnormal",
@@ -615,6 +683,7 @@
     },
     {
       "id": "ode-to-the-mets",
+      "itunesTrackId": 1498121956,
       "title": "Ode to the Mets",
       "album": "The New Abnormal",
       "albumKey": "the-new-abnormal",
@@ -624,6 +693,7 @@
     },
     {
       "id": "psycho-shit",
+      "itunesTrackId": 1891161442,
       "title": "Psycho Shit",
       "album": "Reality Awaits",
       "albumKey": "reality-awaits",
@@ -633,6 +703,7 @@
     },
     {
       "id": "dine-n-dash",
+      "itunesTrackId": 1891161445,
       "title": "Dine N'Dash",
       "album": "Reality Awaits",
       "albumKey": "reality-awaits",
@@ -642,6 +713,7 @@
     },
     {
       "id": "lonely-in-the-future",
+      "itunesTrackId": 1891161447,
       "title": "Lonely in the Future",
       "album": "Reality Awaits",
       "albumKey": "reality-awaits",
@@ -651,6 +723,7 @@
     },
     {
       "id": "falling-out-of-love",
+      "itunesTrackId": 1891161448,
       "title": "Falling Out of Love",
       "album": "Reality Awaits",
       "albumKey": "reality-awaits",
@@ -660,6 +733,7 @@
     },
     {
       "id": "going-to-babble-on",
+      "itunesTrackId": 1891161449,
       "title": "Going to Babble On",
       "album": "Reality Awaits",
       "albumKey": "reality-awaits",
@@ -669,6 +743,7 @@
     },
     {
       "id": "going-shopping",
+      "itunesTrackId": 1891161450,
       "title": "Going Shopping",
       "album": "Reality Awaits",
       "albumKey": "reality-awaits",
@@ -678,6 +753,7 @@
     },
     {
       "id": "liars-remorse",
+      "itunesTrackId": 1891161451,
       "title": "Liar's Remorse",
       "album": "Reality Awaits",
       "albumKey": "reality-awaits",
@@ -687,6 +763,7 @@
     },
     {
       "id": "the-fruits-of-conquest",
+      "itunesTrackId": 1891161453,
       "title": "The Fruits of Conquest",
       "album": "Reality Awaits",
       "albumKey": "reality-awaits",
@@ -696,11 +773,22 @@
     },
     {
       "id": "tyrants-of-the-mellow-moon",
+      "itunesTrackId": 1891161454,
       "title": "Tyrants of the Mellow Moon",
       "album": "Reality Awaits",
       "albumKey": "reality-awaits",
       "year": 2026,
       "releaseType": "Album",
+      "startOffsetSeconds": 0
+    },
+    {
+      "id": "ill-try-anything-once",
+      "itunesTrackId": 1663035766,
+      "title": "I'll Try Anything Once",
+      "album": "The Singles, Vol. 1",
+      "albumKey": "the-singles-vol-1",
+      "year": 2013,
+      "releaseType": "Compilation",
       "startOffsetSeconds": 0
     }
   ]

@@ -4,6 +4,7 @@ import { css, cx } from '@emotion/css';
 import { useStyles2 } from '@grafana/ui';
 import backgroundImage from '../img/background.jpg';
 import { ClipPlayer, ClipState } from '../audio/player';
+import { resolvePreview } from '../audio/preview';
 import { resolveSongs } from '../songs';
 import { buildQueue } from '../utils/queue';
 import { QuizOptions, Song } from '../types';
@@ -405,7 +406,7 @@ const getStyles = (theme: GrafanaTheme2) => ({
 export function StrokesQuizPanel({ options, data }: Props) {
   const styles = useStyles2(getStyles);
   const { songs, source } = useMemo(() => resolveSongs(data), [data]);
-  const playableSongs = useMemo(() => songs.filter((song) => Boolean(song.clipUrl)), [songs]);
+  const playableSongs = useMemo(() => songs, [songs]);
   const rounds = Math.max(1, options.rounds ?? 15);
   const clipLengthSeconds = Math.max(1, options.clipLengthSeconds ?? 5);
   const revealSeconds = Math.max(1, options.revealSeconds ?? 8);
@@ -438,6 +439,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
   const [audioWarning, setAudioWarning] = useState<string | null>(null);
   const [quitArmed, setQuitArmed] = useState(false);
   const [roundLost, setRoundLost] = useState(false);
+  const [artworkById, setArtworkById] = useState<Record<string, string>>({});
   const current = queue[index] ?? null;
   useEffect(() => {
     return () => player.stop();
@@ -477,13 +479,18 @@ export function StrokesQuizPanel({ options, data }: Props) {
   const offsetFor = useCallback((song: Song) => Math.max(0, (song.startOffsetSeconds ?? 0) + extraSkip), [extraSkip]);
   const playClip = useCallback(
     async (song: Song, seconds: number) => {
-      const url = song.clipUrl;
-      if (!url) {
-        setAudioWarning(`No clip bundled for "${song.title}".`);
+      const preview = await resolvePreview(song);
+      if (!preview) {
+        setAudioWarning(`No iTunes preview found for "${song.title}".`);
         return;
       }
-      const ok = await player.play(url, offsetFor(song), seconds);
-      setAudioWarning(ok ? null : 'Playback blocked or the clip is unavailable.');
+      if (preview.artworkUrl) {
+        setArtworkById((current) =>
+          current[song.id] ? current : { ...current, [song.id]: preview.artworkUrl! }
+        );
+      }
+      const ok = await player.play(preview.url, offsetFor(song), seconds);
+      setAudioWarning(ok ? null : 'Playback blocked or the preview is unavailable.');
     },
     [offsetFor, player]
   );
@@ -745,7 +752,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
         <div className={styles.revealRow}>
           {showAlbumArt && (
             <div className={styles.art}>
-              <AlbumArt song={current} />
+              <AlbumArt song={current} artworkUrl={artworkById[current.id]} />
             </div>
           )}
           <div className={styles.revealText}>
@@ -837,8 +844,8 @@ export function StrokesQuizPanel({ options, data }: Props) {
       <div className={styles.footer}>
         <span className={styles.credit}>{options.credit ?? 'Developed by Ömer Faruk Ersakay'}</span>
         <span data-testid="strokes-catalog-status">
-          {source === 'datasource' ? 'Strokes Catalog data source' : 'Built-in catalog'} · {playableSongs.length}/
-          {songs.length} with audio
+          {source === 'datasource' ? 'Strokes Catalog data source' : 'Built-in catalog'} · {songs.length} tracks ·
+          previews via iTunes
         </span>
       </div>
     </div>

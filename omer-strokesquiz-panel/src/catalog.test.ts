@@ -15,9 +15,9 @@ describe('song catalog', () => {
   it('has a unique id per song', () => {
     expect(new Set(songs.map((s) => s.id)).size).toBe(songs.length);
   });
-  it('covers all eight releases, including the EP and Reality Awaits', () => {
+  it('covers every release, including the EP, Reality Awaits and the B-side', () => {
     const albums = Array.from(new Set(songs.map((s) => s.album)));
-    expect(albums).toHaveLength(8);
+    expect(albums).toHaveLength(9);
     expect(albums).toEqual(
       expect.arrayContaining([
         'Is This It',
@@ -28,6 +28,7 @@ describe('song catalog', () => {
         'Future Present Past',
         'The New Abnormal',
         'Reality Awaits',
+        'The Singles, Vol. 1',
       ])
     );
   });

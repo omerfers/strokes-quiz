@@ -40,7 +40,7 @@ You do not need Docker: the repo uses a standalone Grafana 13.2.4 build in
 
 ## The catalog
 
-**78 songs across all 8 releases**, in release order:
+**79 songs across 9 releases**, in release order:
 
 | Year | Release | Type | Songs |
 | --- | --- | --- | --- |
@@ -52,10 +52,12 @@ You do not need Docker: the repo uses a standalone Grafana 13.2.4 build in
 | 2016 | Future Present Past | EP | 3 |
 | 2020 | The New Abnormal | Album | 9 |
 | 2026 | Reality Awaits | Album | 9 |
+| 2013 | The Singles, Vol. 1 | Compilation | 1 |
 
-The data source serves the whole catalog, and every song has a 30-second iTunes
-preview bundled with the panel, so the footer reads `78/78 with audio` and any
-song in the catalog can come up in a round.
+The data source serves the whole catalog. Audio is **not** stored in this repo:
+every song carries its iTunes track id, and the panel fetches Apple's
+30-second preview the first time a round needs it, then keeps it in memory for
+the session. The footer reads `79 tracks · previews via iTunes`.
 
 ## Screenshots
 
@@ -130,40 +132,38 @@ plugin. Swap the file to change the wallpaper, then rebuild.
 
 ## Audio
 
-The repo ships a **30-second iTunes preview** for every one of the 78 songs in
-`omer-strokesquiz-panel/src/audio/clips/`, named by song id
-(`reptilia.m4a`, `last-nite.m4a`, …). `src/audio/index.ts` resolves that folder
-with `require.context` and prefers `mp3 > m4a > ogg > wav`, so dropping a
-higher-quality file with the same id silently replaces the preview.
+Nothing audio-related is committed. Each catalog row carries an
+`itunesTrackId`, and `src/audio/preview.ts` resolves it against Apple's public
+iTunes API the first time the song is played:
 
-To import a folder of downloads (any file names, nested folders are fine):
-
-```bash
-node tools/import-clips.mjs ~/Desktop/strokes-songs/src/audio
-
-# preview the mapping without copying anything
-node tools/import-clips.mjs ~/Desktop/strokes-songs/src/audio --dry-run
+```ts
+const preview = await resolvePreview(song); // { url, artworkUrl } | undefined
+await player.play(preview.url, offsetFor(song), seconds);
 ```
 
-It matches each file to a catalog title (case, accents, punctuation and `&`
-versus `and` are ignored), copies it as `<song-id>.<ext>`, and reports files
-that matched nothing. Then rebuild with `./tools/dev.sh`.
+- One `lookup?id=<trackId>` request per song, cached in memory for the session.
+- The same response supplies `artworkUrl100`, which `AlbumArt` requests at
+  600×600, so the repo ships no cover images either.
+- The player already stops after the configured clip/reveal length, so a
+  30-second preview is enough for the 5-second clip and the reveal.
+- If a lookup fails the round is skipped with a warning instead of breaking.
 
-You do not need to trim tracks: the player seeks to the song's intro offset and
-stops after the configured clip/reveal length, so full-length files work.
+Song ids and track ids live in
+[`omer-strokesquiz-panel/src/catalog.json`](omer-strokesquiz-panel/src/catalog.json);
+`tools/build-assets.mjs` keeps the ids it finds when it regenerates the catalog.
 
-Song ids are in
-[`omer-strokesquiz-panel/src/catalog.json`](omer-strokesquiz-panel/src/catalog.json).
-
-> **Copyright:** these are 30-second previews of recordings owned by The Strokes
-> and RCA. They are included for a course demo only.
+> **Copyright:** the previews are streamed from Apple at play time and are not
+> redistributed with the plugin. A personal, non-commercial project is the usual
+> case for Apple's preview terms; check them if this ever ships publicly.
 
 ## Adding songs
 
 1. Add the title to the matching release's `tracks` array in the `ALBUMS` list in
    `tools/build-assets.mjs` (add a new release object if needed).
 2. `node tools/build-assets.mjs` — rewrites both catalogs and prints the counts.
-3. `node tools/import-clips.mjs <folder>` to copy its audio (optional).
+3. Find its iTunes track id (`https://itunes.apple.com/search?term=...`) and add
+   it as `itunesTrackId` in `catalog.json` — without one the panel falls back to
+   a title search, which is slower and less reliable.
 4. `./tools/dev.sh`
 
 The panel uses the data source when one is attached, and falls back to the
@@ -176,12 +176,10 @@ strokes-quiz/
 ├── omer-strokesquiz-panel/        # panel plugin (game)
 │   ├── webpack.config.ts          # extends .config/webpack with the audio rule
 │   ├── src/components/StrokesQuizPanel.tsx
-│   ├── src/components/AlbumArt.tsx  # real cover art per release
-│   ├── src/img/covers/            # 8 album covers
+│   ├── src/components/AlbumArt.tsx  # cover art from the iTunes response
 │   ├── src/img/background.jpg     # bundled wallpaper
-│   ├── src/audio/index.ts         # require.context clip resolver
+│   ├── src/audio/preview.ts       # iTunes preview + artwork lookup, cached
 │   ├── src/audio/player.ts        # offset-aware HTMLAudioElement wrapper
-│   ├── src/audio/clips/           # 78 song clips, named by id
 │   ├── src/catalog.json           # generated song metadata
 │   ├── src/utils/answer.ts        # answer normalisation
 │   └── src/utils/queue.ts         # shuffle + round queue

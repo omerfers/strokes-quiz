@@ -1,6 +1,5 @@
 import { Field, PanelData } from '@grafana/data';
 import catalog from './catalog.json';
-import { getClipUrl } from './audio';
 import { Song } from './types';
 interface CatalogEntry {
   id: string;
@@ -9,11 +8,9 @@ interface CatalogEntry {
   albumKey: string;
   year: number;
   startOffsetSeconds: number;
+  itunesTrackId?: number;
 }
-export const BUILT_IN_SONGS: Song[] = (catalog as CatalogEntry[]).map((entry) => ({
-  ...entry,
-  clipUrl: getClipUrl(entry.id),
-}));
+export const BUILT_IN_SONGS: Song[] = catalog as CatalogEntry[];
 function readField(
   frame: {
     fields: Field[];
@@ -66,7 +63,7 @@ export function resolveSongs(data: PanelData | undefined): {
       albumKey,
       year: toNumberValue(yearField, i, local?.year ?? 0),
       startOffsetSeconds: toNumberValue(offsetField, i, local?.startOffsetSeconds ?? 0),
-      clipUrl: getClipUrl(id),
+      itunesTrackId: local?.itunesTrackId,
     });
   }
   if (rows.length === 0) {

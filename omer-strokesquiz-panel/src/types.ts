@@ -5,7 +5,7 @@ export interface Song {
   albumKey: string;
   year: number;
   startOffsetSeconds: number;
-  clipUrl?: string;
+  itunesTrackId?: number;
 }
 export interface QuizOptions {
   rounds: number;

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdirSync, readdirSync, writeFileSync, existsSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -136,6 +136,12 @@ const ALBUMS = [
       'Tyrants of the Mellow Moon',
     ],
   },
+  {
+    album: 'The Singles, Vol. 1',
+    year: 2013,
+    kind: 'Compilation',
+    tracks: ["I'll Try Anything Once"],
+  },
 ];
 const DEMO_PLACEHOLDERS = new Set([]);
 function slugify(title) {
@@ -152,6 +158,16 @@ function slugify(title) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
+const existingIds = (() => {
+  const file = join(PANEL, 'src', 'catalog.json');
+  if (!existsSync(file)) return new Map();
+  try {
+    const rows = JSON.parse(readFileSync(file, 'utf8'));
+    return new Map(rows.filter((r) => r.itunesTrackId).map((r) => [r.id, r.itunesTrackId]));
+  } catch {
+    return new Map();
+  }
+})();
 const catalog = ALBUMS.flatMap(({ album, year, tracks, kind }) =>
   tracks.map((title) => {
     const id = slugify(title);
@@ -164,6 +180,7 @@ const catalog = ALBUMS.flatMap(({ album, year, tracks, kind }) =>
       year,
       releaseType: kind ?? 'Album',
       startOffsetSeconds,
+      itunesTrackId: existingIds.get(id),
       demoPlaceholder: DEMO_PLACEHOLDERS.has(id),
     };
   })
@@ -174,8 +191,9 @@ if (duplicates.length) {
 }
 mkdirSync(join(PANEL, 'src'), { recursive: true });
 mkdirSync(join(DS, 'src'), { recursive: true });
-const meta = catalog.map(({ id, title, album, albumKey, year, releaseType, startOffsetSeconds }) => ({
+const meta = catalog.map(({ id, itunesTrackId, title, album, albumKey, year, releaseType, startOffsetSeconds }) => ({
   id,
+  itunesTrackId,
   title,
   album,
   albumKey,
