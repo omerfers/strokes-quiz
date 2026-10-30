@@ -13,7 +13,22 @@ that builds, loads in Grafana and shows the student's name**.
   catalog metadata (titles, albums, years, intro offsets); the audio previews are
   resolved from iTunes by the panel, not by the data source
 
+## Play it on the web
+
+The quiz also runs as a normal website, no Grafana needed: the `web/` folder is
+a standalone Next.js app with the same rules, design and iTunes previews.
+
+```bash
+cd web
+npm install
+npm run dev        # http://localhost:3000
+```
+
+To publish it on Vercel, import this repository, set **Root Directory** to
+`web`, and deploy — there is nothing to configure.
+
 ## Quick start
+
 
 ```bash
 # 1. dependencies (once)
