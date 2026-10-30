@@ -242,9 +242,6 @@ export function Quiz() {
           {phase === "idle" && (
             <div className="content fade-in">
               <h1 className="headline">How well do you know The Strokes?</h1>
-              <p className="message" style={{ maxWidth: "38ch" }}>
-                Five seconds of a song, fifteen rounds, two guesses each. Nothing to install.
-              </p>
               <button type="button" className="btn btn-primary" onClick={startGame}>
                 Start the quiz
               </button>
