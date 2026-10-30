@@ -410,7 +410,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
   const clipLengthSeconds = Math.max(1, options.clipLengthSeconds ?? 5);
   const revealSeconds = Math.max(1, options.revealSeconds ?? 8);
   const extraSkip = Math.max(0, options.extraIntroSkipSeconds ?? 0);
-  const maxGuesses = Math.max(1, options.maxGuesses ?? 3);
+  const maxGuesses = Math.max(1, options.maxGuesses ?? 2);
   const showHints = options.showHints ?? true;
   const showAlbumArt = options.showAlbumArt ?? true;
   const showBackground = options.showBackground ?? true;
@@ -437,6 +437,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
   const [streak, setStreak] = useState({ current: 0, best: 0 });
   const [audioWarning, setAudioWarning] = useState<string | null>(null);
   const [quitArmed, setQuitArmed] = useState(false);
+  const [roundLost, setRoundLost] = useState(false);
   const current = queue[index] ?? null;
   useEffect(() => {
     return () => player.stop();
@@ -494,6 +495,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
       setWrongGuesses(0);
       setAudioWarning(null);
       setQuitArmed(false);
+      setRoundLost(false);
       void playClip(song, clipLengthSeconds);
     },
     [clipLengthSeconds, playClip]
@@ -536,8 +538,17 @@ export function StrokesQuizPanel({ options, data }: Props) {
         return;
       }
       if (!isCorrectGuess(guess, current.title)) {
-        setWrongGuesses((n) => n + 1);
+        const misses = wrongGuesses + 1;
+        setWrongGuesses(misses);
         setVerdict('wrong');
+        if (misses >= maxGuesses) {
+          // Out of tries: the round is lost, so show the answer and move on.
+          setRoundLost(true);
+          setPlayed((n) => n + 1);
+          setStreak((s) => ({ ...s, current: 0 }));
+          setPhase('reveal');
+          void playClip(current, revealSeconds);
+        }
         return;
       }
       setVerdict('correct');
@@ -550,7 +561,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
       setPhase('reveal');
       void playClip(current, revealSeconds);
     },
-    [current, guess, phase, playClip, revealSeconds]
+    [current, guess, maxGuesses, phase, playClip, revealSeconds, wrongGuesses]
   );
   const revealAnswer = useCallback(() => {
     if (phase !== 'playing' || !current) {
@@ -593,6 +604,14 @@ export function StrokesQuizPanel({ options, data }: Props) {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [nextSong, phase]);
+  // A lost round lingers on the answer for a moment, then moves on.
+  useEffect(() => {
+    if (phase !== 'reveal' || !roundLost) {
+      return;
+    }
+    const timer = window.setTimeout(() => nextSong(), 2600);
+    return () => window.clearTimeout(timer);
+  }, [nextSong, phase, roundLost]);
   const toggleAudio = useCallback(() => {
     if (audioState === 'playing') {
       player.pause();
@@ -705,11 +724,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
           </div>
         )}
 
-        {verdict === 'wrong' && (
-          <p className={styles.message}>
-            {wrongGuesses >= maxGuesses ? 'Out of guesses. Reveal it or keep trying.' : 'Not quite. Try again.'}
-          </p>
-        )}
+        {verdict === 'wrong' && <p className={styles.message}>Not quite. Try again.</p>}
 
         {audioWarning && <p className={styles.warning}>{audioWarning}</p>}
       </div>
@@ -744,7 +759,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
               <p className={styles.offsetLine}>Intro skipped {current.startOffsetSeconds.toFixed(1)}s</p>
             )}
             <p className={cx(styles.verdictLine, !correct && styles.verdictMiss)}>
-              {correct ? 'Correct +1' : 'Answer revealed'}
+              {correct ? 'Correct +1' : roundLost ? 'Out of guesses' : 'Answer revealed'}
             </p>
             <button
               className={cx(
@@ -777,11 +792,13 @@ export function StrokesQuizPanel({ options, data }: Props) {
         {accuracy}% accuracy · best streak {streak.best}
       </p>
       <p className={styles.resultLine}>
-        {accuracy >= 90
-          ? 'Certified Strokes scholar.'
-          : accuracy >= 60
-            ? 'Solid run. A few more listens and you will have it.'
-            : 'Time to revisit the discography.'}
+        {queue.length > 0 && score === queue.length
+          ? 'Julian Casablancas himself.'
+          : accuracy >= 90
+            ? 'Certified Strokes scholar.'
+            : accuracy >= 60
+              ? 'Solid run. A few more listens and you will have it.'
+              : 'Time to revisit the discography.'}
       </p>
       <button className={styles.primary} onClick={startGame}>
         Play again

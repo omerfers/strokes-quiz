@@ -29,8 +29,8 @@ export const plugin = new PanelPlugin<QuizOptions>(StrokesQuizPanel).setPanelOpt
     })
     .addNumberInput({
       path: 'maxGuesses',
-      name: 'Guesses before revealing',
-      description: 'After this many misses the reveal button is highlighted. Guessing stays open.',
+      name: 'Guesses before the round is lost',
+      description: 'After this many misses the answer is shown and the quiz moves on.',
       category: ['Quiz'],
       defaultValue: DEFAULT_OPTIONS.maxGuesses,
       settings: { min: 1, max: 10, integer: true },

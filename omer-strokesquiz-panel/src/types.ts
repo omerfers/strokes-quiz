@@ -24,7 +24,7 @@ export const DEFAULT_OPTIONS: QuizOptions = {
   clipLengthSeconds: 5,
   revealSeconds: 8,
   extraIntroSkipSeconds: 0,
-  maxGuesses: 3,
+  maxGuesses: 2,
   showAlbumArt: true,
   showHints: true,
   showBackground: true,
