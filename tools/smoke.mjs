@@ -19,6 +19,41 @@ page.on('console', (msg) => {
   }
 });
 page.on('pageerror', (err) => consoleErrors.push(String(err)));
+// The player keeps its <audio> element out of the DOM, so remember the last
+// preview it started; the lookup response then tells us that song's title.
+await page.addInitScript(() => {
+  const play = HTMLMediaElement.prototype.play;
+  HTMLMediaElement.prototype.play = function (...args) {
+    window.__leafMediaSrc = this.currentSrc || this.src || '';
+    return play.apply(this, args);
+  };
+});
+const previewTitles = new Map();
+page.on('response', async (response) => {
+  if (!response.url().includes('itunes.apple.com/lookup')) {
+    return;
+  }
+  try {
+    const data = await response.json();
+    for (const track of data.results ?? []) {
+      if (track.previewUrl && track.trackName) {
+        previewTitles.set(track.previewUrl, track.trackName);
+      }
+    }
+  } catch {
+    // not JSON (an error page) — the guess step will report the miss
+  }
+});
+const currentSongTitle = async () => {
+  for (let attempt = 0; attempt < 60; attempt += 1) {
+    const src = await page.evaluate(() => window.__leafMediaSrc ?? '');
+    if (src && previewTitles.has(src)) {
+      return previewTitles.get(src);
+    }
+    await page.waitForTimeout(250);
+  }
+  return null;
+};
 const login = await context.request.post(`${BASE}/login`, {
   data: { user: 'admin', password: 'admin' },
 });
@@ -84,21 +119,25 @@ const artVisible = await panel.locator('[data-testid="strokes-album-art"]').isVi
 await page.screenshot({ path: join(OUT, '02-reveal.png') });
 console.log('revealed title   :', firstTitle);
 console.log('album art visible:', artVisible);
+await page.evaluate(() => {
+  window.__leafMediaSrc = '';
+});
 await panel.getByRole('button', { name: /Next song/i }).click();
 await page.waitForTimeout(800);
+const answer = await currentSongTitle();
 let solved = false;
-for (const song of catalog) {
-  await panel.getByLabel('Song title').fill(song.title);
+if (answer) {
+  await panel.getByLabel('Song title').fill(answer);
   await panel.getByRole('button', { name: /^Guess$/ }).click();
-  await page.waitForTimeout(120);
-  if ((await panel.getByText(/Correct \+1/).count()) > 0) {
-    solved = true;
-    break;
-  }
+  await page.waitForTimeout(600);
+  solved = (await panel.getByText(/Correct \+1/).count()) > 0;
+} else {
+  console.log('could not read the playing track from the lookup requests');
 }
-await page.waitForTimeout(600);
+await page.waitForTimeout(400);
 await page.screenshot({ path: join(OUT, '03-correct.png') });
 const score = (await panel.locator('[data-testid="strokes-score"]').textContent())?.replace(/\s+/g, ' ').trim();
+console.log('song played      :', answer ?? 'unknown');
 console.log('correct guess    :', solved);
 console.log('score pill       :', score);
 console.log('console errors   :', consoleErrors.length ? consoleErrors : 'none');
@@ -120,8 +159,12 @@ if (!credit || !/Ömer Faruk Ersakay/.test(credit)) {
 if (!firstTitle || !artVisible) {
   failures.push('reveal did not render title + album art');
 }
-if (!catalogStatus || !catalogStatus.includes(`${catalog.length}/${catalog.length}`)) {
-  failures.push(`footer does not show full audio coverage: ${catalogStatus}`);
+if (
+  !catalogStatus ||
+  !catalogStatus.includes(`${catalog.length} tracks`) ||
+  !/data source/i.test(catalogStatus)
+) {
+  failures.push(`footer does not report the data source catalog: ${catalogStatus}`);
 }
 if (!attributionVisible || !/Powered by/i.test(attributionText) || !logoLoaded) {
   failures.push('the Powered by Grafana line above the catalog is missing');
