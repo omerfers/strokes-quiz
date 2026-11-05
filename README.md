@@ -2,11 +2,14 @@
 
 A music guessing game for Grafana: a random The Strokes clip plays, you type the
 song title, and a correct answer reveals the album art and plays the track for
-another 8 seconds. Score and streak are tracked per run, over the bands's
+another 8 seconds. Score and streak are tracked per run, over the band's
 wallpaper.
 
-Built for the MIS 233 final project, where the deliverable is **a Grafana plugin
-that builds, loads in Grafana and shows the student's name**.
+I made this because I wanted a quiz about my favourite band that I could
+actually play with friends — a clip starts, everyone yells a title, and the
+album cover lands when someone gets it. It happens to ship as a Grafana plugin
+(the MIS 233 final project wanted one that builds, loads and shows the student's
+name), but the assignment was the excuse, not the reason it exists.
 
 - Panel plugin: **Strokes Song Quiz** (`omer-strokesquiz-panel`) — the game UI
 - Data source plugin: **Strokes Song Catalog** (`omer-strokesquiz-datasource`) — serves the
@@ -106,7 +109,8 @@ node tools/smoke.mjs
 | Reveal | "Reveal answer" skips without scoring |
 | Abandon | "Abandon quiz" twice leaves the run, stops the audio and resets the score |
 
-Everything is local: no backend, no external API, no network calls at runtime.
+Everything else is local: no backend and no service of ours to run; the only
+network calls are the iTunes preview lookups described below.
 
 ## Room on Fire intro offset
 
@@ -211,23 +215,41 @@ strokes-quiz/
     └── smoke.mjs                  # headless end-to-end check + screenshots
 ```
 
-## Course requirement mapping
+## What's in the quiz
 
-| Requirement | Where |
-| --- | --- |
-| One Grafana plugin | Two: panel + data source |
-| Builds successfully | `npm run build` in both projects |
-| Loads inside Grafana | `./tools/dev.sh`, dashboard provisioned |
-| Student's name visible | Footer of the panel: "Developed by Ömer Faruk Ersakay" |
-| Panel bonus: real data from a query | Panel reads the data source frame when attached |
-| Panel bonus: configuration options | 10 options (songs per game, clip length, reveal length, max guesses, extra intro skip, album art, hints, wallpaper, dimming, credit) |
-| Panel bonus: interactivity | Start, guess with Enter, pause/resume, abandon, reveal, next, play again, hover states |
-| Data source bonus: mock JSON | `src/songs.json` |
-| Data source bonus: query params | Album filter + row limit in the query editor |
-| Data source bonus: table format | Five fields (id, title, album, year, intro offset), table frame (`preferredVisualisationType: 'table'`) |
-| Data source bonus: error handling | `query()` returns `LoadingState.Error`; `testDatasource()` validates the catalog |
-| Git repo bonus | This repository |
-| Docs + demo video | This README + your recording |
+**The game**
+
+- 79 songs from all nine releases, in release order — album tracks, the
+  *Future Present Past* EP and *The Singles, Vol. 1*
+- A shuffled queue of 15 songs per run (configurable), with a fresh order every
+  time
+- 5-second clips that start at the song's real intro, with pause and resume
+- Forgiving answer matching: case, accents, punctuation and a leading "The"
+  don't matter
+- Hints after a miss — album and year first, then the shape of the title — and
+  the round is lost after the configured number of misses (two by default)
+- Live score, current streak, best streak and accuracy
+- Album art on a correct answer, then 8 more seconds of the song
+- Reveal, abandon, play again, and Enter to move through the round
+- A verdict at the end, including "Julian Casablancas himself." for a perfect
+  run
+
+**The Grafana side**
+
+- A panel plugin with ten options: songs per game, clip length, reveal length,
+  guesses per round, extra intro skip, album art, hints, wallpaper, dimming and
+  the credit line
+- A data source plugin that serves the catalog as a table, with an album filter
+  and a row limit in the query editor
+- Proper error states: a failed query reports the error instead of drawing an
+  empty panel
+- A provisioned dashboard, plus kiosk mode for playing without the Grafana
+  chrome
+
+**The web side**
+
+- A standalone Next.js build with the same rules and the same look, live at
+  <https://strokes-quiz-seven.vercel.app>
 
 ## Installing Grafana manually
 
@@ -251,5 +273,25 @@ For Intel macOS use `darwin-amd64`; for Linux use `linux-amd64` / `linux-arm64`.
 ## Credits
 
 Songs and album titles belong to The Strokes. Album artwork and audio clips are
-the band's own releases, included for a course demo. Wallpaper image supplied by
-the student.
+the band's own releases, streamed from Apple's iTunes previews at play time.
+Wallpaper image is my own.
+
+## How this project was built (AI usage)
+
+I built this in an earlier OpenCode session with an AI coding agent. The
+division of work was pretty clean, and it is easier to state it plainly than to
+pretend otherwise:
+
+| | |
+| --- | --- |
+| **Mine** | The idea — The Strokes, a clip, a guess — and the decision to build it for fun rather than for the assignment. Every rule that makes it a game: 15 songs per run, 5-second clips, an 8-second reveal, two misses and the round is gone, hints after each miss, score and streak. The catalog: the 79 songs, the nine releases and their running order. The *Room on Fire* intro offsets, which I set by ear — 1.2s as the default, longer where the lead-in runs. The design: the stage wallpaper, the dark overlay, the album-art reveal, the kiosk layout and the credit line. And the testing: playing real rounds in Grafana and on the web, checking that the audio starts, the answers match and the score adds up. |
+| **The AI's** | Basically the rest. The code for both plugins: the panel components, `ClipPlayer`, the iTunes preview and artwork lookup, answer normalisation, queue building, and the data source with its album filter and table frame. The Grafana plumbing: provisioning, the dashboard JSON, `custom.ini` and unsigned-plugin loading. The tooling: `build-assets.mjs`, `import-clips.mjs`, `sync.sh`, `dev.sh` and the headless smoke test. The iTunes track-id lookups. The standalone Next.js build in `web/`. The unit and end-to-end tests, and this README. |
+
+So the AI wrote most of the lines, but it did not decide what those lines should
+do. I set the rules, the catalog and the visuals; the AI worked out how to
+implement them, wrote the code and explained the trade-offs. Every round was
+played before it counted as done — a silent intro or a preview restarting itself
+went back for another pass.
+
+The short version: the direction, the catalog and the design are mine; the
+typing and the tooling around them are the AI's.
