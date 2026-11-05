@@ -5,11 +5,11 @@ song title, and a correct answer reveals the album art and plays the track for
 another 8 seconds. Score and streak are tracked per run, over the band's
 wallpaper.
 
-I made this because I wanted a quiz about my favourite band that I could
-actually play with friends — a clip starts, everyone yells a title, and the
-album cover lands when someone gets it. It happens to ship as a Grafana plugin
-(the MIS 233 final project wanted one that builds, loads and shows the student's
-name), but the assignment was the excuse, not the reason it exists.
+This is a quiz about my favourite band, made for me to play on my own: a clip
+plays, I get five seconds to name the song, and a correct answer reveals the
+album cover. It exists because I wanted it — the MIS 233 final project (a
+Grafana plugin that builds, loads and shows the student's name) is just how it
+ended up inside Grafana.
 
 - Panel plugin: **Strokes Song Quiz** (`omer-strokesquiz-panel`) — the game UI
 - Data source plugin: **Strokes Song Catalog** (`omer-strokesquiz-datasource`) — serves the
