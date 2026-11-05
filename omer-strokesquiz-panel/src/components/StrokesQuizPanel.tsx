@@ -8,7 +8,7 @@ import { resolvePreview } from '../audio/preview';
 import { resolveSongs } from '../songs';
 import { buildQueue } from '../utils/queue';
 import { QuizOptions, Song } from '../types';
-import { isCorrectGuess, maskTitle } from '../utils/answer';
+import { isCorrectGuess } from '../utils/answer';
 import { AlbumArt } from './AlbumArt';
 interface Props extends PanelProps<QuizOptions> {}
 type Phase = 'idle' | 'playing' | 'reveal' | 'finished';
@@ -273,11 +273,6 @@ const getStyles = (theme: GrafanaTheme2) => ({
     color: ${FAINT};
   `,
   hintStrong: css`
-    color: ${INK};
-  `,
-  mask: css`
-    font-family: ${theme.typography.fontFamilyMonospace};
-    letter-spacing: 0.16em;
     color: ${INK};
   `,
   message: css`
@@ -671,7 +666,6 @@ export function StrokesQuizPanel({ options, data }: Props) {
   );
   const renderPlaying = () => {
     const hintAlbum = showHints && wrongGuesses >= 1;
-    const hintTitle = showHints && wrongGuesses >= 2;
     const audioLabel =
       audioState === 'playing' ? 'Pause clip' : audioState === 'paused' ? 'Resume clip' : 'Replay clip';
     const statusText = audioState === 'paused' ? 'Paused' : audioState === 'playing' ? 'Clip playing' : 'Clip finished';
@@ -722,12 +716,6 @@ export function StrokesQuizPanel({ options, data }: Props) {
                 {current.album} ({current.year})
               </span>
             </span>
-            {hintTitle && (
-              <span className={styles.hintLine}>
-                <span className={styles.hintKey}>Title</span>
-                <span className={styles.mask}>{maskTitle(current.title)}</span>
-              </span>
-            )}
           </div>
         )}
 

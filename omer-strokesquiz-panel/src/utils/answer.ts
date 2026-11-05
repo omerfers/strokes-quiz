@@ -22,13 +22,6 @@ export function isCorrectGuess(guess: string, title: string): boolean {
   }
   return stripArticles(g) === stripArticles(t);
 }
-export function maskTitle(title: string): string {
-  return title
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((word) => `${word[0].toUpperCase()}${'_'.repeat(Math.max(0, word.length - 1))}`)
-    .join('   ');
-}
 export function wordCount(title: string): number {
   return title.split(/\s+/).filter(Boolean).length;
 }

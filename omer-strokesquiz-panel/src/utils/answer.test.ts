@@ -1,4 +1,4 @@
-import { isCorrectGuess, maskTitle, normalizeAnswer } from './answer';
+import { isCorrectGuess, normalizeAnswer } from './answer';
 describe('normalizeAnswer', () => {
   it('lowercases and strips punctuation', () => {
     expect(normalizeAnswer('  Last Nite! ')).toBe('last nite');
@@ -28,10 +28,5 @@ describe('isCorrectGuess', () => {
   });
   it('rejects partial titles', () => {
     expect(isCorrectGuess('reptil', 'Reptilia')).toBe(false);
-  });
-});
-describe('maskTitle', () => {
-  it('keeps the first letter of each word', () => {
-    expect(maskTitle('Last Nite')).toBe('L___   N___');
   });
 });

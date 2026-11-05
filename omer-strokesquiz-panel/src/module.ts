@@ -54,7 +54,7 @@ export const plugin = new PanelPlugin<QuizOptions>(StrokesQuizPanel).setPanelOpt
     .addBooleanSwitch({
       path: 'showHints',
       name: 'Show hints',
-      description: 'After a wrong guess, reveal the album/year, then the title pattern.',
+      description: 'After a wrong guess, reveal the album and year.',
       category: ['Appearance'],
       defaultValue: DEFAULT_OPTIONS.showHints,
     })
