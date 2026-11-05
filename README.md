@@ -7,9 +7,8 @@ wallpaper.
 
 This is a quiz about my favourite band, made for me to play on my own: a clip
 plays, I get five seconds to name the song, and a correct answer reveals the
-album cover. It exists because I wanted it — the MIS 233 final project (a
-Grafana plugin that builds, loads and shows the student's name) is just how it
-ended up inside Grafana.
+album cover. I wanted to build it anyway. When I found out the MIS 233 final
+project could be this exact idea, it became this repo.
 
 - Panel plugin: **Strokes Song Quiz** (`omer-strokesquiz-panel`) — the game UI
 - Data source plugin: **Strokes Song Catalog** (`omer-strokesquiz-datasource`) — serves the
