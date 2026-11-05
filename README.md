@@ -103,7 +103,7 @@ node tools/smoke.mjs
 | Start | 15 songs are shuffled into a queue (configurable) |
 | Listen | A clip plays for 5s from the song's start offset; pause or resume it any time |
 | Guess | Type the title; accents, case, punctuation and a leading "The" are ignored |
-| Hints | 1st miss reveals album + year, 2nd reveals the title pattern |
+| Hints | A wrong guess reveals the album and year |
 | Correct | +1 score, cover + title shown, track plays for 8s |
 | Reveal | "Reveal answer" skips without scoring |
 | Abandon | "Abandon quiz" twice leaves the run, stops the audio and resets the score |
@@ -225,8 +225,8 @@ strokes-quiz/
 - 5-second clips that start at the song's real intro, with pause and resume
 - Forgiving answer matching: case, accents, punctuation and a leading "The"
   don't matter
-- Hints after a miss — album and year first, then the shape of the title — and
-  the round is lost after the configured number of misses (two by default)
+- A hint after a miss shows the album and year; the round is lost after the
+  configured number of misses (two by default)
 - Live score, current streak, best streak and accuracy
 - Album art on a correct answer, then 8 more seconds of the song
 - Reveal, abandon, play again, and Enter to move through the round
@@ -282,11 +282,11 @@ version of who did what:
 
 | | |
 | --- | --- |
-| **Me** | The idea, and every call about how the game should play: 79 songs in release order, 15 per run, five seconds to guess, eight to enjoy the reveal, two misses and the round is over, one hint for the album and one for the title. I picked the wallpaper and the way the album cover lands on a correct answer. The *Room on Fire* offsets are mine too — I went through the intros by ear and wrote down where the music actually starts. And I tested it by playing, in Grafana and on the web, which is how the silent intros and the previews starting twice got found. |
+| **Me** | The idea, and every call about how the game should play: 79 songs in release order, 15 per run, five seconds to guess, eight to enjoy the reveal, two misses and the round is over, a hint for the album after a miss. I picked the wallpaper and the way the album cover lands on a correct answer. The *Room on Fire* offsets are mine too — I went through the intros by ear and wrote down where the music actually starts. And I tested it by playing, in Grafana and on the web, which is how the silent intros and the previews starting twice got found. |
 | **The AI's** | The code and the scaffolding: both plugins, the React components, `ClipPlayer`, the iTunes preview and artwork lookup, answer normalisation, the queue, the data source query and table frame, the Grafana provisioning and dashboard, the build and smoke-test scripts, the Next.js version, the tests and this README. |
 
 Most of the back-and-forth was me playing the quiz and noticing what was off: a
-clip that started on silence, a preview that restarted itself, a hint that said
-too much. Those went back as small, specific fixes rather than open-ended
-prompts. The AI did the typing; which songs, which rules and what the reveal
+clip that started on silence, a preview that restarted itself, a kiosk view that
+didn't fill the screen. Those went back as small, specific fixes rather than
+open-ended prompts. The AI did the typing; which songs, which rules and what the reveal
 looks like were decided before the first file existed.
