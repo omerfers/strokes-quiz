@@ -275,15 +275,14 @@ Songs and album titles belong to The Strokes. Album artwork and audio clips are
 the band's own releases, streamed from Apple's iTunes previews at play time.
 Wallpaper image is my own.
 
-## How this project was built (AI usage)
+## AI usage
 
-The code came out of an earlier OpenCode session with an AI agent. The short
-version of who did what:
+I made the project with using opencode agent.
 
 | | |
 | --- | --- |
 | **Me** | The idea, and every call about how the game should play: 79 songs in release order, 15 per run, five seconds to guess, eight to enjoy the reveal, two misses and the round is over, a hint for the album after a miss. I picked the wallpaper and the way the album cover lands on a correct answer. The *Room on Fire* offsets are mine too — I went through the intros by ear and wrote down where the music actually starts. And I tested it by playing, in Grafana and on the web, which is how the silent intros and the previews starting twice got found. |
-| **The AI's** | The code and the scaffolding: both plugins, the React components, `ClipPlayer`, the iTunes preview and artwork lookup, answer normalisation, the queue, the data source query and table frame, the Grafana provisioning and dashboard, the build and smoke-test scripts, the Next.js version, the tests and this README. |
+| **AI** | The code and the scaffolding: both plugins, the React components, `ClipPlayer`, the iTunes preview and artwork lookup, answer normalisation, the queue, the data source query and table frame, the Grafana provisioning and dashboard, the build and smoke-test scripts, the Next.js version, the tests and this README. |
 
 Most of the back-and-forth was me playing the quiz and noticing what was off: a
 clip that started on silence, a preview that restarted itself, a kiosk view that
