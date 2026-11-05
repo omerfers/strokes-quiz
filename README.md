@@ -277,20 +277,16 @@ Wallpaper image is my own.
 
 ## How this project was built (AI usage)
 
-I built this in an earlier OpenCode session with an AI coding agent. The
-division of work was pretty clean, and it is easier to state it plainly than to
-pretend otherwise:
+The code came out of an earlier OpenCode session with an AI agent. The short
+version of who did what:
 
 | | |
 | --- | --- |
-| **Mine** | The idea — The Strokes, a clip, a guess — and the decision to build it for fun rather than for the assignment. Every rule that makes it a game: 15 songs per run, 5-second clips, an 8-second reveal, two misses and the round is gone, hints after each miss, score and streak. The catalog: the 79 songs, the nine releases and their running order. The *Room on Fire* intro offsets, which I set by ear — 1.2s as the default, longer where the lead-in runs. The design: the stage wallpaper, the dark overlay, the album-art reveal, the kiosk layout and the credit line. And the testing: playing real rounds in Grafana and on the web, checking that the audio starts, the answers match and the score adds up. |
-| **The AI's** | Basically the rest. The code for both plugins: the panel components, `ClipPlayer`, the iTunes preview and artwork lookup, answer normalisation, queue building, and the data source with its album filter and table frame. The Grafana plumbing: provisioning, the dashboard JSON, `custom.ini` and unsigned-plugin loading. The tooling: `build-assets.mjs`, `import-clips.mjs`, `sync.sh`, `dev.sh` and the headless smoke test. The iTunes track-id lookups. The standalone Next.js build in `web/`. The unit and end-to-end tests, and this README. |
+| **Me** | The idea, and every call about how the game should play: 79 songs in release order, 15 per run, five seconds to guess, eight to enjoy the reveal, two misses and the round is over, one hint for the album and one for the title. I picked the wallpaper and the way the album cover lands on a correct answer. The *Room on Fire* offsets are mine too — I went through the intros by ear and wrote down where the music actually starts. And I tested it by playing, in Grafana and on the web, which is how the silent intros and the previews starting twice got found. |
+| **The AI's** | The code and the scaffolding: both plugins, the React components, `ClipPlayer`, the iTunes preview and artwork lookup, answer normalisation, the queue, the data source query and table frame, the Grafana provisioning and dashboard, the build and smoke-test scripts, the Next.js version, the tests and this README. |
 
-So the AI wrote most of the lines, but it did not decide what those lines should
-do. I set the rules, the catalog and the visuals; the AI worked out how to
-implement them, wrote the code and explained the trade-offs. Every round was
-played before it counted as done — a silent intro or a preview restarting itself
-went back for another pass.
-
-The short version: the direction, the catalog and the design are mine; the
-typing and the tooling around them are the AI's.
+Most of the back-and-forth was me playing the quiz and noticing what was off: a
+clip that started on silence, a preview that restarted itself, a hint that said
+too much. Those went back as small, specific fixes rather than open-ended
+prompts. The AI did the typing; which songs, which rules and what the reveal
+looks like were decided before the first file existed.
