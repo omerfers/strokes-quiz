@@ -264,7 +264,7 @@ strokes-quiz/
 | Data source: table format | Five fields (id, title, album, year, intro offset), `preferredVisualisationType: 'table'` |
 | Data source: error handling | `query()` returns `LoadingState.Error`; `testDatasource()` validates the catalog |
 | Git repository | This repository |
-| Docs + demo video | I haven't done it yet |
+| Demo video | I haven't done it yet |
 
 ## Installing Grafana manually
 
