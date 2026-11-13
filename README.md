@@ -250,6 +250,23 @@ strokes-quiz/
 - A standalone Next.js build with the same rules and the same look, live at
   <https://strokes-quiz-seven.vercel.app>
 
+## MIS 233 bonuses
+
+The bonus items from the assignment, and where each one lives:
+
+| Bonus | Where |
+| --- | --- |
+| A second plugin | Panel + data source, not just one |
+| Panel: real data from a query | The panel reads the data source frame when one is attached |
+| Panel: configuration options | 10 options across Quiz, Audio, Appearance and About |
+| Panel: interactivity | Start, guess with Enter, pause/resume, abandon, reveal, next, play again, hover states |
+| Data source: mock JSON | `omer-strokesquiz-datasource/src/songs.json` |
+| Data source: query parameters | Album filter and row limit in the query editor |
+| Data source: table format | Five fields (id, title, album, year, intro offset), `preferredVisualisationType: 'table'` |
+| Data source: error handling | `query()` returns `LoadingState.Error`; `testDatasource()` validates the catalog |
+| Git repository | This repository |
+| Docs + demo video | This README + your recording |
+
 ## Installing Grafana manually
 
 If `.grafana-dl/` is missing:
