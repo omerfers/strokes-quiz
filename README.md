@@ -297,7 +297,7 @@ I made the project with using opencode agent.
 
 | | |
 | --- | --- |
-| **Me** | The idea, and every call about how the game should play: 79 songs in release order, 15 per run, five seconds to guess, eight to enjoy the reveal, two misses and the round is over, a hint for the album after a miss. I picked the wallpaper and the way the album cover lands on a correct answer. The *Room on Fire* offsets are mine too — I went through the intros by ear and wrote down where the music actually starts. And I tested it by playing, in Grafana and on the web, which is how the silent intros and the previews starting twice got found. |
+| **Me** | The idea, and how the game should play: 79 songs, 15 per run, five seconds to guess, eight to enjoy the reveal, two misses and the round is over, a hint for the album after a miss. I picked the wallpaper and the way the album cover lands on a correct answer. The *Room on Fire* offsets are mine too(first seconds are silent in these album's songs). I went through the intros by ear and wrote down where the music actually starts. And I tested it by playing, in Grafana and on the web, which is how I found the silent intros and some errors on preview part. |
 | **AI** | The code and the scaffolding: both plugins, the React components, `ClipPlayer`, the iTunes preview and artwork lookup, answer normalisation, the queue, the data source query and table frame, the Grafana provisioning and dashboard, the build and smoke-test scripts, the Next.js version, the tests and this README. |
 
 Most of the back-and-forth was me playing the quiz and noticing what was off: a
