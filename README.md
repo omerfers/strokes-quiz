@@ -250,9 +250,8 @@ strokes-quiz/
 - A standalone Next.js build with the same rules and the same look, live at
   <https://strokes-quiz-seven.vercel.app>
 
-## MIS 233 bonuses
+## Bonusses
 
-The bonus items from the assignment, and where each one lives:
 
 | Bonus | Where |
 | --- | --- |
@@ -265,7 +264,7 @@ The bonus items from the assignment, and where each one lives:
 | Data source: table format | Five fields (id, title, album, year, intro offset), `preferredVisualisationType: 'table'` |
 | Data source: error handling | `query()` returns `LoadingState.Error`; `testDatasource()` validates the catalog |
 | Git repository | This repository |
-| Docs + demo video | This README + your recording |
+| Docs + demo video | I haven't done it yet |
 
 ## Installing Grafana manually
 
