@@ -25,7 +25,7 @@
       "id": 1,
       "options": {
         "credit": "Developed by Ömer Faruk Ersakay",
-        "rounds": 15,
+        "rounds": 10,
         "clipLengthSeconds": 5,
         "revealSeconds": 8,
         "extraIntroSkipSeconds": 0,

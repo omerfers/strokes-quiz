@@ -468,6 +468,14 @@ body {
   color: rgba(244, 241, 237, 0.74);
 }
 
+.celebration {
+  display: block;
+  width: min(280px, 72%);
+  height: auto;
+  margin: -6px 0 24px;
+  border-radius: 4px;
+}
+
 .fade-in {
   animation: fade-in 240ms ease-out both;
 }

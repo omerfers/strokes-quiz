@@ -3,6 +3,7 @@ import { GrafanaTheme2, PanelProps } from '@grafana/data';
 import { css, cx } from '@emotion/css';
 import { useStyles2 } from '@grafana/ui';
 import backgroundImage from '../img/background.jpg';
+import julianGif from '../img/julian-casablancas.gif';
 import { ClipPlayer, ClipState } from '../audio/player';
 import { resolvePreview } from '../audio/preview';
 import { resolveSongs } from '../songs';
@@ -377,6 +378,13 @@ const getStyles = (theme: GrafanaTheme2) => ({
     line-height: 1.55;
     color: rgba(244, 241, 237, 0.74);
   `,
+  celebration: css`
+    display: block;
+    width: min(280px, 72%);
+    height: auto;
+    margin: 0 0 24px;
+    border-radius: 4px;
+  `,
   footer: css`
     display: flex;
     align-items: center;
@@ -402,7 +410,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
   const styles = useStyles2(getStyles);
   const { songs, source } = useMemo(() => resolveSongs(data), [data]);
   const playableSongs = useMemo(() => songs, [songs]);
-  const rounds = Math.max(1, options.rounds ?? 15);
+  const rounds = Math.max(1, options.rounds ?? 10);
   const clipLengthSeconds = Math.max(1, options.clipLengthSeconds ?? 5);
   const revealSeconds = Math.max(1, options.revealSeconds ?? 8);
   const extraSkip = Math.max(0, options.extraIntroSkipSeconds ?? 0);
@@ -773,6 +781,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
       </div>
     );
   };
+  const perfect = queue.length > 0 && score === queue.length;
   const renderFinished = () => (
     <div className={styles.content}>
       <p className={styles.eyebrow}>
@@ -787,7 +796,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
         {accuracy}% accuracy · best streak {streak.best}
       </p>
       <p className={styles.resultLine}>
-        {queue.length > 0 && score === queue.length
+        {perfect
           ? 'Julian Casablancas himself.'
           : accuracy >= 90
             ? 'Certified Strokes scholar.'
@@ -795,6 +804,13 @@ export function StrokesQuizPanel({ options, data }: Props) {
               ? 'Solid run. A few more listens and you will have it.'
               : 'Time to revisit the discography.'}
       </p>
+      {perfect && (
+        <img
+          className={styles.celebration}
+          src={julianGif}
+          alt="Julian Casablancas celebrating a perfect run"
+        />
+      )}
       <button className={styles.primary} onClick={startGame}>
         Play again
       </button>

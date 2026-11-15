@@ -8,7 +8,7 @@ import { resolvePreview } from "@/lib/preview";
 import { ClipPlayer } from "@/lib/player";
 import type { ClipState, Song } from "@/lib/types";
 
-const ROUNDS = 15;
+const ROUNDS = 10;
 const CLIP_SECONDS = 5;
 const REVEAL_SECONDS = 8;
 const MAX_GUESSES = 2;
@@ -389,6 +389,14 @@ export function Quiz() {
                 {accuracy}% accuracy · best streak {streak.best}
               </p>
               <p className="result-line">{resultLine}</p>
+              {perfect && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  className="celebration"
+                  src="/julian-casablancas.gif"
+                  alt="Julian Casablancas celebrating a perfect run"
+                />
+              )}
               <button type="button" className="btn btn-primary" onClick={startGame}>
                 Play again
               </button>

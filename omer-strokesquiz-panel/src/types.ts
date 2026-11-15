@@ -20,7 +20,7 @@ export interface QuizOptions {
   credit: string;
 }
 export const DEFAULT_OPTIONS: QuizOptions = {
-  rounds: 15,
+  rounds: 10,
   clipLengthSeconds: 5,
   revealSeconds: 8,
   extraIntroSkipSeconds: 0,
