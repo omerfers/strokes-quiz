@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { GrafanaTheme2, PanelProps } from '@grafana/data';
 import { css, cx } from '@emotion/css';
 import { useStyles2 } from '@grafana/ui';
@@ -441,7 +441,9 @@ export function StrokesQuizPanel({ options, data }: Props) {
   const [audioWarning, setAudioWarning] = useState<string | null>(null);
   const [quitArmed, setQuitArmed] = useState(false);
   const [roundLost, setRoundLost] = useState(false);
+  const [extraPartUsed, setExtraPartUsed] = useState(false);
   const [artworkById, setArtworkById] = useState<Record<string, string>>({});
+  const clipOffsetRef = useRef<number | null>(null);
   const current = queue[index] ?? null;
   useEffect(() => {
     return () => player.stop();
@@ -480,7 +482,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
   }, []);
   const offsetFor = useCallback((song: Song) => Math.max(0, (song.startOffsetSeconds ?? 0) + extraSkip), [extraSkip]);
   const playClip = useCallback(
-    async (song: Song, mode: 'clip' | 'full') => {
+    async (song: Song, mode: 'clip' | 'full', offset?: number) => {
       const preview = await resolvePreview(song);
       if (!preview) {
         setAudioWarning(`No iTunes preview found for "${song.title}".`);
@@ -491,11 +493,18 @@ export function StrokesQuizPanel({ options, data }: Props) {
           current[song.id] ? current : { ...current, [song.id]: preview.artworkUrl! }
         );
       }
-      const ok =
-        mode === 'full'
-          ? await player.playFull(preview.url)
-          : await player.playRandom(preview.url, offsetFor(song), clipLengthSeconds);
-      setAudioWarning(ok ? null : 'Playback blocked or the preview is unavailable.');
+      if (mode === 'full') {
+        const ok = await player.playFull(preview.url);
+        setAudioWarning(ok ? null : 'Playback blocked or the preview is unavailable.');
+        return;
+      }
+      const chosen = await player.playRandom(preview.url, offsetFor(song), clipLengthSeconds, offset);
+      if (chosen === null) {
+        setAudioWarning('Playback blocked or the preview is unavailable.');
+        return;
+      }
+      clipOffsetRef.current = chosen;
+      setAudioWarning(null);
     },
     [clipLengthSeconds, offsetFor, player]
   );
@@ -508,6 +517,8 @@ export function StrokesQuizPanel({ options, data }: Props) {
       setAudioWarning(null);
       setQuitArmed(false);
       setRoundLost(false);
+      setExtraPartUsed(false);
+      clipOffsetRef.current = null;
       void playClip(song, 'clip');
     },
     [playClip]
@@ -541,8 +552,28 @@ export function StrokesQuizPanel({ options, data }: Props) {
     setPlayed(0);
     setStreak({ current: 0, best: 0 });
     setAudioWarning(null);
+    setRoundLost(false);
+    setExtraPartUsed(false);
+    clipOffsetRef.current = null;
     setPhase('idle');
   }, [player, quitArmed]);
+  const returnHome = useCallback(() => {
+    player.stop();
+    setQuitArmed(false);
+    setQueue([]);
+    setIndex(0);
+    setGuess('');
+    setVerdict('none');
+    setWrongGuesses(0);
+    setScore(0);
+    setPlayed(0);
+    setStreak({ current: 0, best: 0 });
+    setAudioWarning(null);
+    setRoundLost(false);
+    setExtraPartUsed(false);
+    clipOffsetRef.current = null;
+    setPhase('idle');
+  }, [player]);
   const submitGuess = useCallback(
     (event: React.SyntheticEvent) => {
       event.preventDefault();
@@ -616,6 +647,34 @@ export function StrokesQuizPanel({ options, data }: Props) {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [nextSong, phase]);
+  // Enter starts a run from the landing screen and returns there after the results.
+  useEffect(() => {
+    if (phase !== 'idle' && phase !== 'finished') {
+      return;
+    }
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== 'Enter' || event.repeat || event.metaKey || event.ctrlKey || event.altKey) {
+        return;
+      }
+      const target = event.target as HTMLElement | null;
+      if (target && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName))) {
+        return;
+      }
+      if (phase === 'finished') {
+        event.preventDefault();
+        returnHome();
+        return;
+      }
+      // Let a focused button fire its own click instead of firing twice.
+      if (target?.tagName === 'BUTTON') {
+        return;
+      }
+      event.preventDefault();
+      startGame();
+    };
+    window.addEventListener('keydown', onKey, true);
+    return () => window.removeEventListener('keydown', onKey, true);
+  }, [phase, returnHome, startGame]);
   const toggleAudio = useCallback(() => {
     if (audioState === 'playing') {
       player.pause();
@@ -626,9 +685,15 @@ export function StrokesQuizPanel({ options, data }: Props) {
       return;
     }
     if (current) {
-      void playClip(current, 'clip');
+      if (!extraPartUsed) {
+        setExtraPartUsed(true);
+        clipOffsetRef.current = null;
+        void playClip(current, 'clip');
+      } else {
+        void playClip(current, 'clip', clipOffsetRef.current ?? undefined);
+      }
     }
-  }, [audioState, current, playClip, player]);
+  }, [audioState, current, extraPartUsed, playClip, player]);
   const accuracy = played > 0 ? Math.round((score / played) * 100) : 0;
   const renderScoreboard = () => (
     <div className={styles.meta}>
@@ -652,6 +717,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
       <button className={styles.primary} onClick={startGame} disabled={playableSongs.length === 0}>
         Start the quiz
       </button>
+      {playableSongs.length > 0 && <p className={styles.keyHint}>Press Enter to start</p>}
       {playableSongs.length === 0 && (
         <p
           className={cx(
@@ -669,7 +735,13 @@ export function StrokesQuizPanel({ options, data }: Props) {
   const renderPlaying = () => {
     const hintAlbum = showHints && wrongGuesses >= 1;
     const audioLabel =
-      audioState === 'playing' ? 'Pause clip' : audioState === 'paused' ? 'Resume clip' : 'Hear another part';
+      audioState === 'playing'
+        ? 'Pause clip'
+        : audioState === 'paused'
+          ? 'Resume clip'
+          : extraPartUsed
+            ? 'Replay part'
+            : 'Hear another part';
     const statusText = audioState === 'paused' ? 'Paused' : audioState === 'playing' ? 'Clip playing' : 'Clip finished';
     return (
       <div className={styles.content}>
@@ -808,6 +880,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
       <button className={styles.primary} onClick={startGame}>
         Play again
       </button>
+      <p className={styles.keyHint}>Press Enter to return to the start</p>
     </div>
   );
   return (

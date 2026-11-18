@@ -77,20 +77,28 @@ export class ClipPlayer {
   isPlaying(): boolean {
     return Boolean(this.el && !this.paused && !this.el.paused && !this.el.ended);
   }
-  async playRandom(url: string, minOffsetSeconds: number, seconds: number): Promise<boolean> {
+  async playRandom(
+    url: string,
+    minOffsetSeconds: number,
+    seconds: number,
+    offsetSeconds?: number
+  ): Promise<number | null> {
     this.stop();
     const el = new Audio(url);
     el.preload = 'auto';
     this.el = el;
     await waitForMetadata(el);
     if (this.el !== el) {
-      return false;
+      return null;
     }
     const clipSeconds = Math.max(0.5, seconds);
     const duration = Number.isFinite(el.duration) && el.duration > 0 ? el.duration : FALLBACK_PREVIEW_SECONDS;
     const min = Math.max(0, minOffsetSeconds);
     const max = Math.max(min, duration - clipSeconds - 0.25);
-    const target = min + Math.random() * Math.max(0, max - min);
+    const target =
+      offsetSeconds !== undefined
+        ? Math.max(0, Math.min(offsetSeconds, Math.max(0, duration - 0.2)))
+        : min + Math.random() * Math.max(0, max - min);
     try {
       el.currentTime = target;
     } catch {}
@@ -98,12 +106,12 @@ export class ClipPlayer {
       await el.play();
     } catch {
       this.stop();
-      return false;
+      return null;
     }
     this.paused = false;
     this.schedule(clipSeconds * 1000);
     this.emit('playing');
-    return true;
+    return target;
   }
   async playFull(url: string): Promise<boolean> {
     this.stop();

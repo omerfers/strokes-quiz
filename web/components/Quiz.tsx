@@ -29,10 +29,12 @@ export function Quiz() {
   const [warning, setWarning] = useState<string | null>(null);
   const [quitArmed, setQuitArmed] = useState(false);
   const [roundLost, setRoundLost] = useState(false);
+  const [extraPartUsed, setExtraPartUsed] = useState(false);
   const [artwork, setArtwork] = useState<Record<string, string>>({});
 
   const [player] = useState(() => new ClipPlayer(setAudioState));
   const inputRef = useRef<HTMLInputElement>(null);
+  const clipOffsetRef = useRef<number | null>(null);
   const current = queue[index] ?? null;
 
   const accuracy = played > 0 ? Math.round((score / played) * 100) : 0;
@@ -42,7 +44,7 @@ export function Quiz() {
   const lastPlay = useRef<{ key: string; at: number }>({ key: "", at: 0 });
 
   const playClip = useCallback(
-    async (song: Song, mode: "clip" | "full") => {
+    async (song: Song, mode: "clip" | "full", offset?: number) => {
       // guard against a duplicate request for the same round (double clicks,
       // re-renders) starting the preview twice
       const key = `${song.id}:${mode}`;
@@ -60,11 +62,23 @@ export function Quiz() {
           map[song.id] ? map : { ...map, [song.id]: preview.artworkUrl! },
         );
       }
-      const ok =
-        mode === "full"
-          ? await player.playFull(preview.url)
-          : await player.playRandom(preview.url, song.startOffsetSeconds, CLIP_SECONDS);
-      setWarning(ok ? null : "Playback blocked — press replay to hear the clip.");
+      if (mode === "full") {
+        const ok = await player.playFull(preview.url);
+        setWarning(ok ? null : "Playback blocked — press replay to hear the clip.");
+        return;
+      }
+      const chosen = await player.playRandom(
+        preview.url,
+        song.startOffsetSeconds,
+        CLIP_SECONDS,
+        offset,
+      );
+      if (chosen === null) {
+        setWarning("Playback blocked — press replay to hear the clip.");
+        return;
+      }
+      clipOffsetRef.current = chosen;
+      setWarning(null);
     },
     [player],
   );
@@ -78,6 +92,8 @@ export function Quiz() {
       setWarning(null);
       setQuitArmed(false);
       setRoundLost(false);
+      setExtraPartUsed(false);
+      clipOffsetRef.current = null;
       void playClip(song, "clip");
       window.setTimeout(() => inputRef.current?.focus(), 40);
     },
@@ -161,8 +177,29 @@ export function Quiz() {
     setPlayed(0);
     setStreak({ current: 0, best: 0 });
     setWarning(null);
+    setRoundLost(false);
+    setExtraPartUsed(false);
+    clipOffsetRef.current = null;
     setPhase("idle");
   }, [player, quitArmed]);
+
+  const returnHome = useCallback(() => {
+    player.stop();
+    setQuitArmed(false);
+    setQueue([]);
+    setIndex(0);
+    setGuess("");
+    setVerdict("none");
+    setWrongGuesses(0);
+    setScore(0);
+    setPlayed(0);
+    setStreak({ current: 0, best: 0 });
+    setWarning(null);
+    setRoundLost(false);
+    setExtraPartUsed(false);
+    clipOffsetRef.current = null;
+    setPhase("idle");
+  }, [player]);
 
   const toggleAudio = useCallback(() => {
     if (audioState === "playing") {
@@ -173,8 +210,16 @@ export function Quiz() {
       void player.resume();
       return;
     }
-    if (current) void playClip(current, "clip");
-  }, [audioState, current, playClip, player]);
+    if (current) {
+      if (!extraPartUsed) {
+        setExtraPartUsed(true);
+        clipOffsetRef.current = null;
+        void playClip(current, "clip");
+      } else {
+        void playClip(current, "clip", clipOffsetRef.current ?? undefined);
+      }
+    }
+  }, [audioState, current, extraPartUsed, playClip, player]);
 
   // Enter moves on from the answer screen; a lost round also moves on by itself.
   useEffect(() => {
@@ -190,8 +235,39 @@ export function Quiz() {
     return () => window.removeEventListener("keydown", onKey);
   }, [nextSong, phase]);
 
+  // Enter starts a run from the landing screen and returns there after the results.
+  useEffect(() => {
+    if (phase !== "idle" && phase !== "finished") return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Enter" || event.repeat || event.metaKey || event.ctrlKey || event.altKey) {
+        return;
+      }
+      const target = event.target as HTMLElement | null;
+      if (target && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName))) {
+        return;
+      }
+      if (phase === "finished") {
+        event.preventDefault();
+        returnHome();
+        return;
+      }
+      // Let a focused button fire its own click instead of firing twice.
+      if (target?.tagName === "BUTTON") return;
+      event.preventDefault();
+      startGame();
+    };
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
+  }, [phase, returnHome, startGame]);
+
   const audioLabel =
-    audioState === "playing" ? "Pause clip" : audioState === "paused" ? "Resume clip" : "Hear another part";
+    audioState === "playing"
+      ? "Pause clip"
+      : audioState === "paused"
+        ? "Resume clip"
+        : extraPartUsed
+          ? "Replay part"
+          : "Hear another part";
   const audioStatus =
     audioState === "paused" ? "Paused" : audioState === "playing" ? "Clip playing" : "Clip finished";
 
@@ -249,6 +325,7 @@ export function Quiz() {
               <button type="button" className="btn btn-primary" onClick={startGame}>
                 Start the quiz
               </button>
+              <p className="key-hint">Press Enter to start</p>
             </div>
           )}
 
@@ -395,6 +472,7 @@ export function Quiz() {
               <button type="button" className="btn btn-primary" onClick={startGame}>
                 Play again
               </button>
+              <p className="key-hint">Press Enter to return to the start</p>
             </div>
           )}
         </main>

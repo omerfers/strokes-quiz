@@ -54,7 +54,12 @@ export class ClipPlayer {
     return true;
   }
 
-  async playRandom(url: string, minOffsetSeconds: number, seconds: number) {
+  async playRandom(
+    url: string,
+    minOffsetSeconds: number,
+    seconds: number,
+    offsetSeconds?: number,
+  ): Promise<number | null> {
     this.stop();
     const token = ++this.token;
     const el = new Audio(url);
@@ -63,27 +68,31 @@ export class ClipPlayer {
     this.el = el;
     const clipSeconds = Math.max(0.5, seconds);
     try {
-      await this.seek(el, minOffsetSeconds);
+      await this.seek(el, offsetSeconds ?? minOffsetSeconds);
       // a newer round may have started while the clip was loading
-      if (token !== this.token) return false;
+      if (token !== this.token) return null;
       const duration =
         Number.isFinite(el.duration) && el.duration > 0 ? el.duration : FALLBACK_PREVIEW_SECONDS;
       const min = Math.max(0, minOffsetSeconds);
       const max = Math.max(min, duration - clipSeconds - 0.25);
-      el.currentTime = min + Math.random() * Math.max(0, max - min);
+      const target =
+        offsetSeconds !== undefined
+          ? Math.max(0, Math.min(offsetSeconds, Math.max(0, duration - 0.2)))
+          : min + Math.random() * Math.max(0, max - min);
+      el.currentTime = target;
       await el.play();
+      if (token !== this.token) {
+        el.pause();
+        return null;
+      }
+      this.startTimer(clipSeconds * 1000);
+      this.emit("playing");
+      el.onended = () => this.stop();
+      return target;
     } catch {
       if (token === this.token) this.stop();
-      return false;
+      return null;
     }
-    if (token !== this.token) {
-      el.pause();
-      return false;
-    }
-    this.startTimer(clipSeconds * 1000);
-    this.emit("playing");
-    el.onended = () => this.stop();
-    return true;
   }
 
   async playFull(url: string) {

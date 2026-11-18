@@ -29,4 +29,15 @@ describe('isCorrectGuess', () => {
   it('rejects partial titles', () => {
     expect(isCorrectGuess('reptil', 'Reptilia')).toBe(false);
   });
+  it('accepts a single missing letter', () => {
+    expect(isCorrectGuess('conqust', 'Conquest')).toBe(true);
+    expect(isCorrectGuess('machin', 'Machine')).toBe(true);
+  });
+  it('accepts a transposed pair', () => {
+    expect(isCorrectGuess('machien', 'Machine')).toBe(true);
+  });
+  it('accepts a typo in a real catalog title', () => {
+    expect(isCorrectGuess('reptila', 'Reptilia')).toBe(true);
+    expect(isCorrectGuess('juicebx', 'Juicebox')).toBe(true);
+  });
 });

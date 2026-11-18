@@ -100,12 +100,13 @@ node tools/smoke.mjs
 
 | Step | Behaviour |
 | --- | --- |
-| Start | 10 songs are shuffled into a queue (configurable) |
+| Start | 10 songs are shuffled into a queue (configurable); Enter or the button starts |
 | Listen | A random 5s window from the song's preview plays; pause or resume it any time |
-| Guess | Type the title; accents, case, punctuation and a leading "The" are ignored |
+| Guess | Type the title; accents, case, punctuation, a leading "The" and small typos are ignored |
 | Hints | A wrong guess reveals the album and year |
 | Correct | +1 score, cover + title shown, the full preview plays |
-| Reveal | "Reveal answer" skips without scoring |
+| Reveal | "Reveal answer" skips without scoring; Enter moves on |
+| Results | Enter returns to the start screen; Play again starts a new run |
 | Abandon | "Abandon quiz" twice leaves the run, stops the audio and resets the score |
 
 Everything else is local: no backend and no service of ours to run; the only
@@ -224,14 +225,16 @@ strokes-quiz/
   *Future Present Past* EP and *The Singles, Vol. 1*
 - A shuffled queue of 10 songs per run (configurable), with a fresh order every
   time
-- Random 5-second windows from each song, with pause and resume
-- Forgiving answer matching: case, accents, punctuation and a leading "The"
-  don't matter
+- Random 5-second windows from each song, with one "Hear another part" re-roll
+  per round and replay of the same part after that, plus pause and resume
+- Forgiving answer matching: case, accents, punctuation, a leading "The" and
+  small typos don't matter
 - A hint after a miss shows the album and year; the round is lost after the
   configured number of misses (two by default)
 - Live score, current streak, best streak and accuracy
-- Album art on a correct answer, then 8 more seconds of the song
-- Reveal, abandon, play again, and Enter to move through the round
+- Album art on a correct answer, then the full preview
+- Reveal, abandon, play again, and Enter to start, advance, or return to the
+  start screen
 - A verdict at the end, including "Julian Casablancas himself." for a perfect
   run
 
@@ -260,7 +263,7 @@ strokes-quiz/
 | A second plugin | Panel + data source, not just one |
 | Panel: real data from a query | The panel reads the data source frame when one is attached |
 | Panel: configuration options | 9 options across Quiz, Audio, Appearance and About |
-| Panel: interactivity | Start, guess with Enter, pause/resume, abandon, reveal, next, play again, hover states |
+| Panel: interactivity | Start with Enter, guess, pause/resume, one clip re-roll, abandon, reveal, next, play again, Enter back to the start |
 | Data source: mock JSON | `omer-strokesquiz-datasource/src/songs.json` |
 | Data source: query parameters | Album filter and row limit in the query editor |
 | Data source: table format | Five fields (id, title, album, year, intro offset), `preferredVisualisationType: 'table'` |
