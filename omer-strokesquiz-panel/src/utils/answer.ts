@@ -8,8 +8,12 @@ export function normalizeAnswer(value: string): string {
     .replace(/\s+/g, ' ')
     .trim();
 }
-function stripArticles(value: string): string {
-  return value.replace(/^(the|a|an)\s+/, '');
+const IGNORED_WORDS = new Set(['the', 'a', 'an', 'of', 'in', 'on', 'at', 'to', 'and', 'or']);
+function stripSmallWords(value: string): string {
+  return value
+    .split(/\s+/)
+    .filter((word) => !IGNORED_WORDS.has(word))
+    .join(' ');
 }
 function editDistance(a: string, b: string): number {
   const dp = Array.from({ length: a.length + 1 }, (_, i) =>
@@ -46,13 +50,13 @@ function wordMatches(guess: string, title: string): boolean {
     .some((word) => editDistance(guess, word) <= (word.length >= 10 ? 2 : 1));
 }
 export function isCorrectGuess(guess: string, title: string): boolean {
-  const g = stripArticles(normalizeAnswer(guess));
+  const g = stripSmallWords(normalizeAnswer(guess));
   if (!g) {
     return false;
   }
   const candidates = new Set([
-    stripArticles(normalizeAnswer(title)),
-    stripArticles(normalizeAnswer(title.replace(/\(.*?\)/g, ''))),
+    stripSmallWords(normalizeAnswer(title)),
+    stripSmallWords(normalizeAnswer(title.replace(/\(.*?\)/g, ''))),
   ]);
   return [...candidates].some((candidate) => matches(g, candidate) || wordMatches(g, candidate));
 }

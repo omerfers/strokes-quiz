@@ -48,6 +48,11 @@ describe('isCorrectGuess', () => {
     expect(isCorrectGuess('conquest', 'The Fruits of Conquest')).toBe(true);
     expect(isCorrectGuess('machin', "80's Comedown Machine")).toBe(true);
   });
+  it('ignores small words inside the title', () => {
+    expect(isCorrectGuess('life is simple in moonlight', 'Life Is Simple in the Moonlight')).toBe(true);
+    expect(isCorrectGuess('heart in cage', 'Heart in a Cage')).toBe(true);
+    expect(isCorrectGuess('fruits conquest', 'The Fruits of Conquest')).toBe(true);
+  });
   it('does not accept short generic words as titles', () => {
     expect(isCorrectGuess('love', 'Falling Out of Love')).toBe(false);
     expect(isCorrectGuess('time', 'All the Time')).toBe(false);

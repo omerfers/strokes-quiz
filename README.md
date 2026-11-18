@@ -102,7 +102,7 @@ node tools/smoke.mjs
 | --- | --- |
 | Start | 10 songs are shuffled into a queue (configurable); Enter or the button starts |
 | Listen | A random 5s window from the song's preview plays; pause or resume it any time |
-| Guess | Type the title; accents, case, punctuation, a leading "The" and small typos are ignored. A distinctive word of 6+ letters can also answer a long title. |
+| Guess | Type the title; accents, case, punctuation, small words like "the" or "of", and small typos are ignored. A distinctive word of 6+ letters can also answer a long title. |
 | Hints | A wrong guess reveals the album and year |
 | Correct | +1 score, cover + title shown, the full preview plays |
 | Reveal | "Reveal answer" skips without scoring; Enter moves on |
@@ -227,9 +227,9 @@ strokes-quiz/
   time
 - Random 5-second windows from each song, with one "Hear another part" re-roll
   per round and replay of the same part after that, plus pause and resume
-- Forgiving answer matching: case, accents, punctuation, a leading "The" and
-  small typos don't matter; a distinctive word of 6+ letters can answer a long
-  title
+- Forgiving answer matching: case, accents, punctuation, small words like "the"
+  or "of", and small typos don't matter; a distinctive word of 6+ letters can
+  answer a long title
 - A hint after a miss shows the album and year; the round is lost after the
   configured number of misses (two by default)
 - Live score, current streak, best streak and accuracy

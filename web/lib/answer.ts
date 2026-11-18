@@ -1,4 +1,11 @@
-const ARTICLES = /^(the|a|an)\s+/;
+const IGNORED_WORDS = new Set(["the", "a", "an", "of", "in", "on", "at", "to", "and", "or"]);
+
+function stripSmallWords(value: string): string {
+  return value
+    .split(/\s+/)
+    .filter((word) => !IGNORED_WORDS.has(word))
+    .join(" ");
+}
 
 export function normalize(value: string): string {
   return value
@@ -8,7 +15,7 @@ export function normalize(value: string): string {
     .replace(/[’']/g, "")
     .replace(/&/g, " and ")
     .replace(/[^a-z0-9]+/g, " ")
-    .replace(ARTICLES, "")
+    .replace(/\s+/g, " ")
     .trim();
 }
 
@@ -46,8 +53,11 @@ function wordMatches(guess: string, title: string): boolean {
 }
 
 export function isCorrectGuess(guess: string, title: string): boolean {
-  const value = normalize(guess);
+  const value = stripSmallWords(normalize(guess));
   if (!value) return false;
-  const candidates = [normalize(title), normalize(title.replace(/\(.*?\)/g, ""))];
+  const candidates = [
+    stripSmallWords(normalize(title)),
+    stripSmallWords(normalize(title.replace(/\(.*?\)/g, ""))),
+  ];
   return candidates.some((candidate) => matches(value, candidate) || wordMatches(value, candidate));
 }
