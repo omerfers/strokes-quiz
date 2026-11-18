@@ -37,8 +37,17 @@ function matches(guess: string, title: string): boolean {
   return editDistance(guess, title) <= limit;
 }
 
+function wordMatches(guess: string, title: string): boolean {
+  if (guess.includes(" ") || guess.length < 6) return false;
+  return title
+    .split(/\s+/)
+    .filter((word) => word.length >= 6)
+    .some((word) => editDistance(guess, word) <= (word.length >= 10 ? 2 : 1));
+}
+
 export function isCorrectGuess(guess: string, title: string): boolean {
   const value = normalize(guess);
   if (!value) return false;
-  return matches(value, normalize(title)) || matches(value, normalize(title.replace(/\(.*?\)/g, "")));
+  const candidates = [normalize(title), normalize(title.replace(/\(.*?\)/g, ""))];
+  return candidates.some((candidate) => matches(value, candidate) || wordMatches(value, candidate));
 }

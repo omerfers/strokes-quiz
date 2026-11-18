@@ -40,4 +40,16 @@ describe('isCorrectGuess', () => {
     expect(isCorrectGuess('reptila', 'Reptilia')).toBe(true);
     expect(isCorrectGuess('juicebx', 'Juicebox')).toBe(true);
   });
+  it('accepts typos in the long Reality Awaits and Comedown Machine titles', () => {
+    expect(isCorrectGuess('the fruits of conqust', 'The Fruits of Conquest')).toBe(true);
+    expect(isCorrectGuess("80's comedown machin", "80's Comedown Machine")).toBe(true);
+  });
+  it('accepts a distinctive word from a long title', () => {
+    expect(isCorrectGuess('conquest', 'The Fruits of Conquest')).toBe(true);
+    expect(isCorrectGuess('machin', "80's Comedown Machine")).toBe(true);
+  });
+  it('does not accept short generic words as titles', () => {
+    expect(isCorrectGuess('love', 'Falling Out of Love')).toBe(false);
+    expect(isCorrectGuess('time', 'All the Time')).toBe(false);
+  });
 });

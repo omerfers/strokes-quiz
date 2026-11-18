@@ -36,6 +36,15 @@ function matches(guess: string, title: string): boolean {
   const limit = title.length >= 10 ? 2 : title.length >= 4 ? 1 : 0;
   return editDistance(guess, title) <= limit;
 }
+function wordMatches(guess: string, title: string): boolean {
+  if (guess.includes(' ') || guess.length < 6) {
+    return false;
+  }
+  return title
+    .split(/\s+/)
+    .filter((word) => word.length >= 6)
+    .some((word) => editDistance(guess, word) <= (word.length >= 10 ? 2 : 1));
+}
 export function isCorrectGuess(guess: string, title: string): boolean {
   const g = stripArticles(normalizeAnswer(guess));
   if (!g) {
@@ -45,7 +54,7 @@ export function isCorrectGuess(guess: string, title: string): boolean {
     stripArticles(normalizeAnswer(title)),
     stripArticles(normalizeAnswer(title.replace(/\(.*?\)/g, ''))),
   ]);
-  return [...candidates].some((candidate) => matches(g, candidate));
+  return [...candidates].some((candidate) => matches(g, candidate) || wordMatches(g, candidate));
 }
 export function wordCount(title: string): number {
   return title.split(/\s+/).filter(Boolean).length;
