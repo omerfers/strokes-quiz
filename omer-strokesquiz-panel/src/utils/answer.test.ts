@@ -53,6 +53,16 @@ describe('isCorrectGuess', () => {
     expect(isCorrectGuess('heart in cage', 'Heart in a Cage')).toBe(true);
     expect(isCorrectGuess('fruits conquest', 'The Fruits of Conquest')).toBe(true);
   });
+  it('accepts a substantial partial title', () => {
+    expect(isCorrectGuess('life simple moonlight', 'Life Is Simple in the Moonlight')).toBe(true);
+    expect(isCorrectGuess('simple moonlight', 'Life Is Simple in the Moonlight')).toBe(true);
+    expect(isCorrectGuess('life is simple', 'Life Is Simple in the Moonlight')).toBe(true);
+    expect(isCorrectGuess('adults talking', 'The Adults Are Talking')).toBe(true);
+  });
+  it('still rejects thin partials', () => {
+    expect(isCorrectGuess('life simple', 'Life Is Simple in the Moonlight')).toBe(false);
+    expect(isCorrectGuess('reptil', 'Reptilia')).toBe(false);
+  });
   it('does not accept short generic words as titles', () => {
     expect(isCorrectGuess('love', 'Falling Out of Love')).toBe(false);
     expect(isCorrectGuess('time', 'All the Time')).toBe(false);

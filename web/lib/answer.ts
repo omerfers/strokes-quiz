@@ -52,6 +52,30 @@ function wordMatches(guess: string, title: string): boolean {
     .some((word) => editDistance(guess, word) <= (word.length >= 10 ? 2 : 1));
 }
 
+function similarity(a: string, b: string): number {
+  const longest = Math.max(a.length, b.length);
+  return longest === 0 ? 0 : 1 - editDistance(a, b) / longest;
+}
+
+function tokenCoverage(guess: string, title: string): boolean {
+  const guessWords = guess.split(/\s+/).filter(Boolean);
+  const titleWords = title.split(/\s+/).filter(Boolean);
+  if (guessWords.length === 0 || titleWords.length === 0) return false;
+  let matchedChars = 0;
+  let hasDistinctiveMatch = false;
+  for (const titleWord of titleWords) {
+    const hit = guessWords.some(
+      (guessWord) => editDistance(guessWord, titleWord) <= (titleWord.length >= 10 ? 2 : 1),
+    );
+    if (hit) {
+      matchedChars += titleWord.length;
+      if (titleWord.length >= 6) hasDistinctiveMatch = true;
+    }
+  }
+  const titleChars = titleWords.reduce((total, word) => total + word.length, 0);
+  return hasDistinctiveMatch && matchedChars / titleChars >= 0.55;
+}
+
 export function isCorrectGuess(guess: string, title: string): boolean {
   const value = stripSmallWords(normalize(guess));
   if (!value) return false;
@@ -59,5 +83,11 @@ export function isCorrectGuess(guess: string, title: string): boolean {
     stripSmallWords(normalize(title)),
     stripSmallWords(normalize(title.replace(/\(.*?\)/g, ""))),
   ];
-  return candidates.some((candidate) => matches(value, candidate) || wordMatches(value, candidate));
+  return candidates.some(
+    (candidate) =>
+      matches(value, candidate) ||
+      wordMatches(value, candidate) ||
+      tokenCoverage(value, candidate) ||
+      similarity(value, candidate) >= 0.82,
+  );
 }
