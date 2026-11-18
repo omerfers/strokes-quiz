@@ -412,7 +412,6 @@ export function StrokesQuizPanel({ options, data }: Props) {
   const playableSongs = useMemo(() => songs, [songs]);
   const rounds = Math.max(1, options.rounds ?? 10);
   const clipLengthSeconds = Math.max(1, options.clipLengthSeconds ?? 5);
-  const revealSeconds = Math.max(1, options.revealSeconds ?? 8);
   const extraSkip = Math.max(0, options.extraIntroSkipSeconds ?? 0);
   const maxGuesses = Math.max(1, options.maxGuesses ?? 2);
   const showHints = options.showHints ?? true;
@@ -481,7 +480,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
   }, []);
   const offsetFor = useCallback((song: Song) => Math.max(0, (song.startOffsetSeconds ?? 0) + extraSkip), [extraSkip]);
   const playClip = useCallback(
-    async (song: Song, seconds: number) => {
+    async (song: Song, mode: 'clip' | 'full') => {
       const preview = await resolvePreview(song);
       if (!preview) {
         setAudioWarning(`No iTunes preview found for "${song.title}".`);
@@ -492,10 +491,13 @@ export function StrokesQuizPanel({ options, data }: Props) {
           current[song.id] ? current : { ...current, [song.id]: preview.artworkUrl! }
         );
       }
-      const ok = await player.play(preview.url, offsetFor(song), seconds);
+      const ok =
+        mode === 'full'
+          ? await player.playFull(preview.url)
+          : await player.playRandom(preview.url, offsetFor(song), clipLengthSeconds);
       setAudioWarning(ok ? null : 'Playback blocked or the preview is unavailable.');
     },
-    [offsetFor, player]
+    [clipLengthSeconds, offsetFor, player]
   );
   const beginRound = useCallback(
     (song: Song) => {
@@ -506,9 +508,9 @@ export function StrokesQuizPanel({ options, data }: Props) {
       setAudioWarning(null);
       setQuitArmed(false);
       setRoundLost(false);
-      void playClip(song, clipLengthSeconds);
+      void playClip(song, 'clip');
     },
-    [clipLengthSeconds, playClip]
+    [playClip]
   );
   const startGame = useCallback(() => {
     const nextQueue = buildQueue(playableSongs, rounds);
@@ -557,7 +559,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
           setPlayed((n) => n + 1);
           setStreak((s) => ({ ...s, current: 0 }));
           setPhase('reveal');
-          void playClip(current, revealSeconds);
+          void playClip(current, 'full');
         }
         return;
       }
@@ -569,9 +571,9 @@ export function StrokesQuizPanel({ options, data }: Props) {
         return { current: next, best: Math.max(s.best, next) };
       });
       setPhase('reveal');
-      void playClip(current, revealSeconds);
+      void playClip(current, 'full');
     },
-    [current, guess, maxGuesses, phase, playClip, revealSeconds, wrongGuesses]
+    [current, guess, maxGuesses, phase, playClip, wrongGuesses]
   );
   const revealAnswer = useCallback(() => {
     if (phase !== 'playing' || !current) {
@@ -581,8 +583,8 @@ export function StrokesQuizPanel({ options, data }: Props) {
     setPlayed((n) => n + 1);
     setStreak((s) => ({ ...s, current: 0 }));
     setPhase('reveal');
-    void playClip(current, revealSeconds);
-  }, [current, phase, playClip, revealSeconds]);
+    void playClip(current, 'full');
+  }, [current, phase, playClip]);
   const nextSong = useCallback(() => {
     player.stop();
     const nextIndex = index + 1;
@@ -614,14 +616,6 @@ export function StrokesQuizPanel({ options, data }: Props) {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [nextSong, phase]);
-  // A lost round lingers on the answer for a moment, then moves on.
-  useEffect(() => {
-    if (phase !== 'reveal' || !roundLost) {
-      return;
-    }
-    const timer = window.setTimeout(() => nextSong(), 2600);
-    return () => window.clearTimeout(timer);
-  }, [nextSong, phase, roundLost]);
   const toggleAudio = useCallback(() => {
     if (audioState === 'playing') {
       player.pause();
@@ -632,9 +626,9 @@ export function StrokesQuizPanel({ options, data }: Props) {
       return;
     }
     if (current) {
-      void playClip(current, clipLengthSeconds);
+      void playClip(current, 'clip');
     }
-  }, [audioState, clipLengthSeconds, current, playClip, player]);
+  }, [audioState, current, playClip, player]);
   const accuracy = played > 0 ? Math.round((score / played) * 100) : 0;
   const renderScoreboard = () => (
     <div className={styles.meta}>
@@ -675,7 +669,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
   const renderPlaying = () => {
     const hintAlbum = showHints && wrongGuesses >= 1;
     const audioLabel =
-      audioState === 'playing' ? 'Pause clip' : audioState === 'paused' ? 'Resume clip' : 'Replay clip';
+      audioState === 'playing' ? 'Pause clip' : audioState === 'paused' ? 'Resume clip' : 'Hear another part';
     const statusText = audioState === 'paused' ? 'Paused' : audioState === 'playing' ? 'Clip playing' : 'Clip finished';
     return (
       <div className={styles.content}>

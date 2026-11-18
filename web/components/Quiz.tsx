@@ -10,9 +10,7 @@ import type { ClipState, Song } from "@/lib/types";
 
 const ROUNDS = 10;
 const CLIP_SECONDS = 5;
-const REVEAL_SECONDS = 8;
 const MAX_GUESSES = 2;
-const AUTO_ADVANCE_MS = 2600;
 
 type Phase = "idle" | "playing" | "reveal" | "finished";
 type Verdict = "none" | "wrong" | "correct";
@@ -44,10 +42,10 @@ export function Quiz() {
   const lastPlay = useRef<{ key: string; at: number }>({ key: "", at: 0 });
 
   const playClip = useCallback(
-    async (song: Song, seconds: number) => {
+    async (song: Song, mode: "clip" | "full") => {
       // guard against a duplicate request for the same round (double clicks,
       // re-renders) starting the preview twice
-      const key = `${song.id}:${seconds}`;
+      const key = `${song.id}:${mode}`;
       const now = Date.now();
       if (lastPlay.current.key === key && now - lastPlay.current.at < 700) return;
       lastPlay.current = { key, at: now };
@@ -62,7 +60,10 @@ export function Quiz() {
           map[song.id] ? map : { ...map, [song.id]: preview.artworkUrl! },
         );
       }
-      const ok = await player.play(preview.url, song.startOffsetSeconds, seconds);
+      const ok =
+        mode === "full"
+          ? await player.playFull(preview.url)
+          : await player.playRandom(preview.url, song.startOffsetSeconds, CLIP_SECONDS);
       setWarning(ok ? null : "Playback blocked — press replay to hear the clip.");
     },
     [player],
@@ -77,7 +78,7 @@ export function Quiz() {
       setWarning(null);
       setQuitArmed(false);
       setRoundLost(false);
-      void playClip(song, CLIP_SECONDS);
+      void playClip(song, "clip");
       window.setTimeout(() => inputRef.current?.focus(), 40);
     },
     [playClip],
@@ -120,7 +121,7 @@ export function Quiz() {
           setPlayed((n) => n + 1);
           setStreak((s) => ({ ...s, current: 0 }));
           setPhase("reveal");
-          void playClip(current, REVEAL_SECONDS);
+          void playClip(current, "full");
         }
         return;
       }
@@ -133,7 +134,7 @@ export function Quiz() {
         return { current: next, best: Math.max(s.best, next) };
       });
       setPhase("reveal");
-      void playClip(current, REVEAL_SECONDS);
+      void playClip(current, "full");
     },
     [current, guess, phase, playClip, wrongGuesses],
   );
@@ -144,7 +145,7 @@ export function Quiz() {
     setPlayed((n) => n + 1);
     setStreak((s) => ({ ...s, current: 0 }));
     setPhase("reveal");
-    void playClip(current, REVEAL_SECONDS);
+    void playClip(current, "full");
   }, [current, phase, playClip]);
 
   const abandon = useCallback(() => {
@@ -172,7 +173,7 @@ export function Quiz() {
       void player.resume();
       return;
     }
-    if (current) void playClip(current, CLIP_SECONDS);
+    if (current) void playClip(current, "clip");
   }, [audioState, current, playClip, player]);
 
   // Enter moves on from the answer screen; a lost round also moves on by itself.
@@ -189,14 +190,8 @@ export function Quiz() {
     return () => window.removeEventListener("keydown", onKey);
   }, [nextSong, phase]);
 
-  useEffect(() => {
-    if (phase !== "reveal" || !roundLost) return;
-    const timer = window.setTimeout(() => nextSong(), AUTO_ADVANCE_MS);
-    return () => window.clearTimeout(timer);
-  }, [nextSong, phase, roundLost]);
-
   const audioLabel =
-    audioState === "playing" ? "Pause clip" : audioState === "paused" ? "Resume clip" : "Replay clip";
+    audioState === "playing" ? "Pause clip" : audioState === "paused" ? "Resume clip" : "Hear another part";
   const audioStatus =
     audioState === "paused" ? "Paused" : audioState === "playing" ? "Clip playing" : "Clip finished";
 

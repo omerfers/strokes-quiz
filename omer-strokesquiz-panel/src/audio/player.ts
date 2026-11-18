@@ -1,4 +1,5 @@
 const METADATA_TIMEOUT_MS = 2500;
+const FALLBACK_PREVIEW_SECONDS = 30;
 function waitForMetadata(el: HTMLAudioElement): Promise<void> {
   if (el.readyState >= 1) {
     return Promise.resolve();
@@ -76,7 +77,7 @@ export class ClipPlayer {
   isPlaying(): boolean {
     return Boolean(this.el && !this.paused && !this.el.paused && !this.el.ended);
   }
-  async play(url: string, offsetSeconds: number, seconds: number): Promise<boolean> {
+  async playRandom(url: string, minOffsetSeconds: number, seconds: number): Promise<boolean> {
     this.stop();
     const el = new Audio(url);
     el.preload = 'auto';
@@ -85,9 +86,11 @@ export class ClipPlayer {
     if (this.el !== el) {
       return false;
     }
-    const duration = Number.isFinite(el.duration) ? el.duration : 0;
-    const offset = Math.max(0, offsetSeconds);
-    const target = duration > 0 ? Math.min(offset, Math.max(0, duration - 0.2)) : offset;
+    const clipSeconds = Math.max(0.5, seconds);
+    const duration = Number.isFinite(el.duration) && el.duration > 0 ? el.duration : FALLBACK_PREVIEW_SECONDS;
+    const min = Math.max(0, minOffsetSeconds);
+    const max = Math.max(min, duration - clipSeconds - 0.25);
+    const target = min + Math.random() * Math.max(0, max - min);
     try {
       el.currentTime = target;
     } catch {}
@@ -98,7 +101,32 @@ export class ClipPlayer {
       return false;
     }
     this.paused = false;
-    this.schedule(Math.max(0.5, seconds) * 1000);
+    this.schedule(clipSeconds * 1000);
+    this.emit('playing');
+    return true;
+  }
+  async playFull(url: string): Promise<boolean> {
+    this.stop();
+    const el = new Audio(url);
+    el.preload = 'auto';
+    this.el = el;
+    await waitForMetadata(el);
+    if (this.el !== el) {
+      return false;
+    }
+    try {
+      el.currentTime = 0;
+    } catch {}
+    try {
+      await el.play();
+    } catch {
+      this.stop();
+      return false;
+    }
+    this.paused = false;
+    const duration = Number.isFinite(el.duration) && el.duration > 0 ? el.duration : FALLBACK_PREVIEW_SECONDS;
+    this.schedule(Math.max(0.5, duration) * 1000);
+    el.onended = () => this.stop();
     this.emit('playing');
     return true;
   }

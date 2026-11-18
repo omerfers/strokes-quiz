@@ -10,7 +10,6 @@ export interface Song {
 export interface QuizOptions {
   rounds: number;
   clipLengthSeconds: number;
-  revealSeconds: number;
   extraIntroSkipSeconds: number;
   maxGuesses: number;
   showAlbumArt: boolean;
@@ -22,7 +21,6 @@ export interface QuizOptions {
 export const DEFAULT_OPTIONS: QuizOptions = {
   rounds: 10,
   clipLengthSeconds: 5,
-  revealSeconds: 8,
   extraIntroSkipSeconds: 0,
   maxGuesses: 2,
   showAlbumArt: true,

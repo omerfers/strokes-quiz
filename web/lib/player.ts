@@ -1,5 +1,7 @@
 import type { ClipState } from "./types";
 
+const FALLBACK_PREVIEW_SECONDS = 30;
+
 export class ClipPlayer {
   private el: HTMLAudioElement | null = null;
   private timer: number | null = null;
@@ -52,7 +54,39 @@ export class ClipPlayer {
     return true;
   }
 
-  async play(url: string, offsetSeconds: number, seconds: number) {
+  async playRandom(url: string, minOffsetSeconds: number, seconds: number) {
+    this.stop();
+    const token = ++this.token;
+    const el = new Audio(url);
+    el.preload = "auto";
+    el.crossOrigin = "anonymous";
+    this.el = el;
+    const clipSeconds = Math.max(0.5, seconds);
+    try {
+      await this.seek(el, minOffsetSeconds);
+      // a newer round may have started while the clip was loading
+      if (token !== this.token) return false;
+      const duration =
+        Number.isFinite(el.duration) && el.duration > 0 ? el.duration : FALLBACK_PREVIEW_SECONDS;
+      const min = Math.max(0, minOffsetSeconds);
+      const max = Math.max(min, duration - clipSeconds - 0.25);
+      el.currentTime = min + Math.random() * Math.max(0, max - min);
+      await el.play();
+    } catch {
+      if (token === this.token) this.stop();
+      return false;
+    }
+    if (token !== this.token) {
+      el.pause();
+      return false;
+    }
+    this.startTimer(clipSeconds * 1000);
+    this.emit("playing");
+    el.onended = () => this.stop();
+    return true;
+  }
+
+  async playFull(url: string) {
     this.stop();
     const token = ++this.token;
     const el = new Audio(url);
@@ -60,7 +94,7 @@ export class ClipPlayer {
     el.crossOrigin = "anonymous";
     this.el = el;
     try {
-      await this.seek(el, offsetSeconds);
+      await this.seek(el, 0);
       // a newer round may have started while the clip was loading
       if (token !== this.token) return false;
       await el.play();
@@ -72,7 +106,9 @@ export class ClipPlayer {
       el.pause();
       return false;
     }
-    this.startTimer(seconds * 1000);
+    const duration =
+      Number.isFinite(el.duration) && el.duration > 0 ? el.duration : FALLBACK_PREVIEW_SECONDS;
+    this.startTimer(Math.max(0.5, duration) * 1000);
     this.emit("playing");
     el.onended = () => this.stop();
     return true;

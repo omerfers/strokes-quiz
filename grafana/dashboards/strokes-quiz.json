@@ -27,7 +27,6 @@
         "credit": "Developed by Ömer Faruk Ersakay",
         "rounds": 10,
         "clipLengthSeconds": 5,
-        "revealSeconds": 8,
         "extraIntroSkipSeconds": 0,
         "maxGuesses": 2,
         "showAlbumArt": true,

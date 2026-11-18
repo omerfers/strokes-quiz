@@ -20,14 +20,6 @@ export const plugin = new PanelPlugin<QuizOptions>(StrokesQuizPanel).setPanelOpt
       settings: { min: 1, max: 60 },
     })
     .addNumberInput({
-      path: 'revealSeconds',
-      name: 'Reveal length (seconds)',
-      description: 'How long the song plays after the answer is shown.',
-      category: ['Quiz'],
-      defaultValue: DEFAULT_OPTIONS.revealSeconds,
-      settings: { min: 1, max: 60 },
-    })
-    .addNumberInput({
       path: 'maxGuesses',
       name: 'Guesses before the round is lost',
       description: 'After this many misses the answer is shown and the quiz moves on.',

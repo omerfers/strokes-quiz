@@ -1,9 +1,9 @@
 # The Strokes — Song Quiz (Grafana plugins)
 
-A music guessing game for Grafana: a random The Strokes clip plays, you type the
-song title, and a correct answer reveals the album art and plays the track for
-another 8 seconds. Score and streak are tracked per run, over the band's
-wallpaper.
+A music guessing game for Grafana: a random five-second window from a Strokes
+song plays, you type the title, and a correct answer reveals the album art and
+plays the rest of the preview. Score and streak are tracked per run, over the
+band's wallpaper.
 
 This is a quiz about my favourite band, made for me to play on my own: a clip
 plays, I get five seconds to name the song, and a correct answer reveals the
@@ -101,10 +101,10 @@ node tools/smoke.mjs
 | Step | Behaviour |
 | --- | --- |
 | Start | 10 songs are shuffled into a queue (configurable) |
-| Listen | A clip plays for 5s from the song's start offset; pause or resume it any time |
+| Listen | A random 5s window from the song's preview plays; pause or resume it any time |
 | Guess | Type the title; accents, case, punctuation and a leading "The" are ignored |
 | Hints | A wrong guess reveals the album and year |
-| Correct | +1 score, cover + title shown, track plays for 8s |
+| Correct | +1 score, cover + title shown, the full preview plays |
 | Reveal | "Reveal answer" skips without scoring |
 | Abandon | "Abandon quiz" twice leaves the run, stops the audio and resets the score |
 
@@ -124,10 +124,11 @@ with per-track overrides where the intro runs longer:
 | 12:51 | 1.3s |
 | Every other Room on Fire track | 1.2s |
 
-Non-*Room on Fire* songs default to `0`. The offset is applied to both the
-guessing clip and the reveal, and `ClipPlayer` clamps it so a short clip can
-never seek past its own end. A panel option (**Extra intro skip**) adds a global
-nudge if a clip still starts silent.
+Non-*Room on Fire* songs default to `0`. The offset is the minimum start for
+the guessing clip, so a random window never begins inside a silent lead-in;
+`ClipPlayer` also clamps it so a short clip can never seek past its own end. A
+panel option (**Extra intro skip**) adds a global nudge if a clip still starts
+silent.
 
 To change the values, edit `ROOM_ON_FIRE_OFFSET` / `ROOM_ON_FIRE_OVERRIDES` in
 [`tools/build-assets.mjs`](tools/build-assets.mjs) and run
@@ -155,14 +156,15 @@ iTunes API the first time the song is played:
 
 ```ts
 const preview = await resolvePreview(song); // { url, artworkUrl } | undefined
-await player.play(preview.url, offsetFor(song), seconds);
+await player.playRandom(preview.url, offsetFor(song), 5); // guess
+await player.playFull(preview.url);                    // reveal
 ```
 
 - One `lookup?id=<trackId>` request per song, cached in memory for the session.
 - The same response supplies `artworkUrl100`, which `AlbumArt` requests at
   600×600, so the repo ships no cover images either.
-- The player already stops after the configured clip/reveal length, so a
-  30-second preview is enough for the 5-second clip and the reveal.
+- The guess clip stops after five seconds; a correct answer plays the whole
+  30-second preview.
 - If a lookup fails the round is skipped with a warning instead of breaking.
 
 Song ids and track ids live in
@@ -222,7 +224,7 @@ strokes-quiz/
   *Future Present Past* EP and *The Singles, Vol. 1*
 - A shuffled queue of 10 songs per run (configurable), with a fresh order every
   time
-- 5-second clips that start at the song's real intro, with pause and resume
+- Random 5-second windows from each song, with pause and resume
 - Forgiving answer matching: case, accents, punctuation and a leading "The"
   don't matter
 - A hint after a miss shows the album and year; the round is lost after the
@@ -235,7 +237,7 @@ strokes-quiz/
 
 **The Grafana side**
 
-- A panel plugin with ten options: songs per game, clip length, reveal length,
+- A panel plugin with nine options: songs per game, clip length,
   guesses per round, extra intro skip, album art, hints, wallpaper, dimming and
   the credit line
 - A data source plugin that serves the catalog as a table, with an album filter
@@ -257,7 +259,7 @@ strokes-quiz/
 | --- | --- |
 | A second plugin | Panel + data source, not just one |
 | Panel: real data from a query | The panel reads the data source frame when one is attached |
-| Panel: configuration options | 10 options across Quiz, Audio, Appearance and About |
+| Panel: configuration options | 9 options across Quiz, Audio, Appearance and About |
 | Panel: interactivity | Start, guess with Enter, pause/resume, abandon, reveal, next, play again, hover states |
 | Data source: mock JSON | `omer-strokesquiz-datasource/src/songs.json` |
 | Data source: query parameters | Album filter and row limit in the query editor |
@@ -297,7 +299,7 @@ I made the project with using opencode agent.
 
 | | |
 | --- | --- |
-| **Me** | The idea, and how the game should play: 79 songs, 10 per run, five seconds to guess, eight to enjoy the reveal, two misses and the round is over, a hint for the album after a miss, were mine. I picked the wallpaper and the way the album cover lands on a correct answer. The *Room on Fire* offsets are mine too(first seconds are silent in these album's songs). I went through the intros by ear and wrote down where the music actually starts. And I tested it by playing, in Grafana and on the web, which is how I found the silent intros and some errors on preview part. |
+| **Me** | The idea, and how the game should play: 79 songs, 10 per run, five seconds to guess, the full preview after the answer, two misses and the round is over, a hint for the album after a miss, were mine. I picked the wallpaper and the way the album cover lands on a correct answer. The *Room on Fire* offsets are mine too(first seconds are silent in these album's songs). I went through the intros by ear and wrote down where the music actually starts. And I tested it by playing, in Grafana and on the web, which is how I found the silent intros and some errors on preview part. |
 | **AI** | The code and the scaffolding: both plugins, the React components, `ClipPlayer`, the iTunes preview and artwork lookup, answer normalisation, the queue, the data source query and table frame, the Grafana provisioning and dashboard, the build and smoke-test scripts, the Next.js version, the tests and this README. |
 
 Most of the back-and-forth was me playing the quiz and noticing what was off: a
