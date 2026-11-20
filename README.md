@@ -256,21 +256,23 @@ strokes-quiz/
 - A standalone Next.js build with the same rules and the same look, live at
   <https://strokes-quiz-seven.vercel.app>
 
-## Bonusses
+## Bonuses
 
-
-| Bonus | Where |
-| --- | --- |
-| A second plugin | Panel + data source, not just one |
-| Panel: real data from a query | The panel reads the data source frame when one is attached |
-| Panel: configuration options | 9 options across Quiz, Audio, Appearance and About |
-| Panel: interactivity | Start with Enter, guess, pause/resume, one clip re-roll, abandon, reveal, next, play again, Enter back to the start |
-| Data source: mock JSON | `omer-strokesquiz-datasource/src/songs.json` |
-| Data source: query parameters | Album filter and row limit in the query editor |
-| Data source: table format | Five fields (id, title, album, year, intro offset), `preferredVisualisationType: 'table'` |
-| Data source: error handling | `query()` returns `LoadingState.Error`; `testDatasource()` validates the catalog |
-| Git repository | This repository |
-| Demo video | I haven't done it yet |
+| Bonus | Points | Covered? | Where / notes |
+| --- | --- | --- | --- |
+| Datasource usage | 1 | Yes (custom) | The panel reads the Strokes Catalog data source when attached; the built-in catalog is the fallback |
+| Datasource ops | 1, 3 or 5 | Yes | Album filter, row limit, template interpolation, table frame, `LoadingState.Error`, `testDatasource()` |
+| Datasource add | 5 | Yes | `omer-strokesquiz-datasource` — a second plugin, not just a panel |
+| Panel ops | 1–15 | Yes | 9 options, guess/score/streak loop, pause/resume, one clip re-roll, reveal, abandon, Enter navigation, album art, wallpaper, perfect-run GIF |
+| Additional panel | 1 | Yes (text) | A text panel under the quiz for the "Powered by Grafana" line |
+| AI | 1–10 | Yes | Built with an OpenCode agent; the split is documented under "AI usage" above |
+| GitHub | 1 | Yes | `github.com/omerfers/strokes-quiz` |
+| Documentation | 1 | Yes | This README |
+| Good code | 1–3 | Yes | TypeScript, typed frames, modular components, 30 unit tests, typecheck and lint |
+| Superset | 5 | No | The project is on the Grafana track |
+| WebSocket | 5 | No | No live WebSocket data; iTunes previews use HTTP |
+| YouTube | 1 | No | Demo video not recorded yet |
+| Test | 1 | Yes | 30 unit tests plus the headless smoke test |
 
 ## Installing Grafana manually
 
