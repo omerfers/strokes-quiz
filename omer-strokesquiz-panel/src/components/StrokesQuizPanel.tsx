@@ -3,6 +3,7 @@ import { GrafanaTheme2, PanelProps } from '@grafana/data';
 import { css, cx } from '@emotion/css';
 import { useStyles2 } from '@grafana/ui';
 import backgroundImage from '../img/background.jpg';
+import julianGif from '../img/julian-casablancas.gif';
 import { ClipPlayer, ClipState } from '../audio/player';
 import { resolvePreview } from '../audio/preview';
 import { resolveSongs } from '../songs';
@@ -15,8 +16,6 @@ type Phase = 'idle' | 'playing' | 'reveal' | 'finished';
 type Verdict = 'none' | 'wrong' | 'correct';
 const INK = '#f4f1ed';
 const ACCENT = '#c9332a';
-const JULIAN_GIF =
-  'https://raw.githubusercontent.com/omerfers/strokes-quiz/main/omer-strokesquiz-panel/src/img/julian-casablancas.gif';
 const MUTED = 'rgba(244, 241, 237, 0.56)';
 const FAINT = 'rgba(244, 241, 237, 0.36)';
 const HAIRLINE = 'rgba(244, 241, 237, 0.14)';
@@ -874,7 +873,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
       {perfect && (
         <img
           className={styles.celebration}
-          src={JULIAN_GIF}
+          src={julianGif}
           alt="Julian Casablancas celebrating a perfect run"
         />
       )}

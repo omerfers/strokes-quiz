@@ -11,8 +11,6 @@ import type { ClipState, Song } from "@/lib/types";
 const ROUNDS = 10;
 const CLIP_SECONDS = 5;
 const MAX_GUESSES = 2;
-const JULIAN_GIF =
-  "https://raw.githubusercontent.com/omerfers/strokes-quiz/main/omer-strokesquiz-panel/src/img/julian-casablancas.gif";
 
 type Phase = "idle" | "playing" | "reveal" | "finished";
 type Verdict = "none" | "wrong" | "correct";
@@ -467,7 +465,7 @@ export function Quiz() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   className="celebration"
-                  src={JULIAN_GIF}
+                  src="/julian-casablancas.gif"
                   alt="Julian Casablancas celebrating a perfect run"
                 />
               )}
