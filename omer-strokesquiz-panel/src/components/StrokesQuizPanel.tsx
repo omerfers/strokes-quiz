@@ -873,7 +873,7 @@ export function StrokesQuizPanel({ options, data }: Props) {
       {perfect && (
         <img
           className={styles.celebration}
-          src={julianGif}
+          src={`${julianGif}?v=2`}
           alt="Julian Casablancas celebrating a perfect run"
         />
       )}

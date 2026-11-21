@@ -465,7 +465,7 @@ export function Quiz() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   className="celebration"
-                  src="/julian-casablancas.gif"
+                  src="/julian-casablancas.gif?v=2"
                   alt="Julian Casablancas celebrating a perfect run"
                 />
               )}
