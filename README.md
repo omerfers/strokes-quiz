@@ -60,7 +60,7 @@ You do not need Docker: the repo uses a standalone Grafana 13.2.4 build in
 
 ## The catalog
 
-**79 songs across 9 releases**, in release order:
+**80 songs across 9 releases**, in release order:
 
 | Year | Release | Type | Songs |
 | --- | --- | --- | --- |
@@ -72,12 +72,12 @@ You do not need Docker: the repo uses a standalone Grafana 13.2.4 build in
 | 2016 | Future Present Past | EP | 3 |
 | 2020 | The New Abnormal | Album | 9 |
 | 2026 | Reality Awaits | Album | 9 |
-| 2013 | The Singles, Vol. 1 | Compilation | 1 |
+| 2013 | The Singles, Vol. 1 | Compilation | 2 |
 
 The data source serves the whole catalog. Audio is **not** stored in this repo:
 every song carries its iTunes track id, and the panel fetches Apple's
 30-second preview the first time a round needs it, then keeps it in memory for
-the session. The footer reads `79 tracks · previews via iTunes`.
+the session. The footer reads `80 tracks · previews via iTunes`.
 
 ## Screenshots
 
@@ -221,7 +221,7 @@ strokes-quiz/
 
 **The game**
 
-- 79 songs from all nine releases, in release order — album tracks, the
+- 80 songs from all nine releases, in release order — album tracks, the
   *Future Present Past* EP and *The Singles, Vol. 1*
 - A shuffled queue of 10 songs per run (configurable), with a fresh order every
   time
@@ -305,7 +305,7 @@ I made the project with using opencode agent.
 
 | | |
 | --- | --- |
-| **Me** | The idea, and how the game should play: 79 songs, 10 per run, five seconds to guess, the full preview after the answer, two misses and the round is over, a hint for the album after a miss, were mine. I picked the wallpaper and the way the album cover lands on a correct answer. The *Room on Fire* offsets are mine too(first seconds are silent in these album's songs). Each round plays a random 5-second window from the 30-second preview. And I tested it by playing, in Grafana and on the web, which is how I found the silent intros and some errors on preview part. |
+| **Me** | The idea, and how the game should play: 80 songs, 10 per run, five seconds to guess, the full preview after the answer, two misses and the round is over, a hint for the album after a miss, were mine. I picked the wallpaper and the way the album cover lands on a correct answer. The *Room on Fire* offsets are mine too(first seconds are silent in these album's songs). Each round plays a random 5-second window from the 30-second preview. And I tested it by playing, in Grafana and on the web, which is how I found the silent intros and some errors on preview part. |
 | **AI** | The code and the scaffolding: both plugins, the React components, `ClipPlayer`, the iTunes preview and artwork lookup, answer normalisation, the queue, the data source query and table frame, the Grafana provisioning and dashboard, the build and smoke-test scripts, the Next.js version, the tests and this README. |
 
 Most of the back-and-forth was me playing the quiz and noticing what was off: a

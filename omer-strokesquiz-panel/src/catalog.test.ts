@@ -6,6 +6,7 @@ interface Entry {
   year: number;
   releaseType: string;
   startOffsetSeconds: number;
+  itunesTrackId?: number;
 }
 const songs = catalog as Entry[];
 describe('song catalog', () => {
@@ -45,6 +46,12 @@ describe('song catalog', () => {
       expect(song.releaseType).toBe('Album');
       expect(song.year).toBe(2026);
     });
+  });
+  it('includes Modern Girls & Old-Fashioned Men with an iTunes preview id', () => {
+    const song = songs.find((s) => s.id === 'modern-girls-and-old-fashioned-men');
+    expect(song).toBeDefined();
+    expect(song?.itunesTrackId).toBe(1663034689);
+    expect(song?.album).toBe('The Singles, Vol. 1');
   });
   it('skips the Room on Fire lead-in', () => {
     const roomOnFire = songs.filter((s) => s.album === 'Room on Fire');

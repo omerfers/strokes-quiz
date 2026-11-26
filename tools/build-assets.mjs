@@ -140,7 +140,7 @@ const ALBUMS = [
     album: 'The Singles, Vol. 1',
     year: 2013,
     kind: 'Compilation',
-    tracks: ["I'll Try Anything Once"],
+    tracks: ["I'll Try Anything Once", 'Modern Girls & Old-Fashioned Men'],
   },
 ];
 const DEMO_PLACEHOLDERS = new Set([]);
